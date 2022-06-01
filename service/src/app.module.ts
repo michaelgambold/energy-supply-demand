@@ -1,3 +1,4 @@
+import { MikroORM } from '@mikro-orm/core';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -15,4 +16,11 @@ import { AppService } from './app.service';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private readonly orm: MikroORM) {}
+
+  async onModuleInit(): Promise<void> {
+    await this.orm.getMigrator().up();
+    await this.orm.getSeeder().seed(DatabaseSeeder);
+  }
+}
