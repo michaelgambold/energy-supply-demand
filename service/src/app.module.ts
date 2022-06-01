@@ -8,6 +8,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { FuelSeeder } from './seeders/FuelSeeder';
 import { RegionSeeder } from './seeders/RegionSeeder';
+import { DataScraperModule } from './data-scraper/data-scraper.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { RegionSeeder } from './seeders/RegionSeeder';
     }),
     ConfigModule.forRoot(),
     MikroOrmModule.forRoot(),
+    DataScraperModule,
   ],
   controllers: [AppController],
   providers: [AppService],
