@@ -9,6 +9,7 @@ import { AppService } from './app.service';
 import { FuelSeeder } from './seeders/FuelSeeder';
 import { RegionSeeder } from './seeders/RegionSeeder';
 import { DataScraperModule } from './data-scraper/data-scraper.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { DataScraperModule } from './data-scraper/data-scraper.module';
     }),
     ConfigModule.forRoot(),
     MikroOrmModule.forRoot(),
+    ScheduleModule.forRoot(),
     DataScraperModule,
   ],
   controllers: [AppController],

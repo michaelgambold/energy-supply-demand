@@ -1,7 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { AxiosResponse } from 'axios';
-import { Observable } from 'rxjs';
+import { Cron } from '@nestjs/schedule';
 import { RealTimeFuelData } from './dto/real-time-fuel-data.dto';
 
 @Injectable()
@@ -11,7 +10,10 @@ export class DataScraperService {
 
   constructor(private httpService: HttpService) {}
 
-  scrapeData(): Observable<AxiosResponse<RealTimeFuelData>> {
-    return this.httpService.get<RealTimeFuelData>(this.url);
+  @Cron('30 * * * * *')
+  scrapeData() {
+    this.httpService.get<RealTimeFuelData>(this.url).subscribe((data) => {
+      console.log(data);
+    });
   }
 }
