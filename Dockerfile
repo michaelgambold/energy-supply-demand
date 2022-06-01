@@ -16,10 +16,17 @@ RUN npm run build
 
 FROM node:16-alpine
 
+ENV NODE_ENV production
+
 WORKDIR /app
 
-COPY --from=buildWeb ./web ./web
-COPY --from=buildService ./service ./service
+# copy built files from builders
+COPY --from=buildWeb ./web/dist ./web/dist
+COPY --from=buildService ./service/dist ./service/dist
+
+# get service prod dependencies for service
+COPY ./service/package*.json ./service
+RUN npm --prefix ./service ci
 
 EXPOSE 3000
 
