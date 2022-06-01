@@ -5,3 +5,24 @@ services:
     build: .
     ports:
       - "3000:3000"
+    networks:
+      - energy
+    environment:
+      MIKRO_ORM_HOST: postgres
+      MIKRO_ORM_PORT: 5432
+      MIKRO_ORM_USER: postgres
+      MIKRO_ORM_PASSWORD: password
+      MIKRO_ORM_DB_NAME: postgres
+
+  postgres:
+    image: postgres
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - energy
+    environment:
+      POSTGRES_PASSWORD: password
+
+networks:
+  energy:
