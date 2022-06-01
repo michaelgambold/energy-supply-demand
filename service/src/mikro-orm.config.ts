@@ -1,17 +1,15 @@
 import { MikroOrmModuleOptions as Options } from '@mikro-orm/nestjs';
 // import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
-// import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
+import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
 import { LoadStrategy } from '@mikro-orm/core';
 
 const config: Options = {
-  type: 'sqlite',
-  dbName: 'data/pi-garage.sqlite3',
+  type: 'postgresql',
   entities: ['dist/**/*.entity.js'],
   entitiesTs: ['src/**/*.entity.ts'],
-  debug: false,
   loadStrategy: LoadStrategy.JOINED,
   // highlighter: new SqlHighlighter(),
-  // metadataProvider: TsMorphMetadataProvider,
+  metadataProvider: TsMorphMetadataProvider,
   migrations: {
     path: 'dist/migrations',
     pathTs: 'src/migrations',
