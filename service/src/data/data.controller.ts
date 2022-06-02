@@ -12,7 +12,7 @@ import { DataService } from './data.service';
 import { CreateDatumDto } from './dto/create-datum.dto';
 // import { UpdateDatumDto } from './dto/update-datum.dto';
 
-@Controller('api/data')
+@Controller('api/v1/data')
 export class DataController {
   private readonly logger = new Logger(DataController.name);
 
@@ -23,10 +23,10 @@ export class DataController {
   //   return this.dataService.create(createDatumDto);
   // }
 
-  // @Get()
-  // findAll() {
-  //   return this.dataService.findAll();
-  // }
+  @Get()
+  findLatestData() {
+    return this.dataService.findLatestData(500);
+  }
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {

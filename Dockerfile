@@ -30,4 +30,6 @@ RUN npm --prefix ./service ci
 
 EXPOSE 3000
 
-CMD ["node", "service/dist/main.js"]
+WORKDIR /app/service
+
+CMD ["node", "dist/main.js"]

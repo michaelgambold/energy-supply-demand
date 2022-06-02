@@ -11,11 +11,13 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { DataModule } from './data/data.module';
 import { FuelModule } from './fuel/fuel.module';
 import { RegionModule } from './region/region.module';
+import { SocketModule } from './socket/socket.module';
 
 @Module({
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', 'web', 'dist'),
+      renderPath: '/',
     }),
     ConfigModule.forRoot(),
     MikroOrmModule.forRoot(),
@@ -24,6 +26,7 @@ import { RegionModule } from './region/region.module';
     DataModule,
     FuelModule,
     RegionModule,
+    SocketModule,
   ],
   controllers: [],
   providers: [],
