@@ -10,12 +10,12 @@ export class DataService {
 
   constructor(
     @InjectRepository(DataFact)
-    private doorReposity: EntityRepository<DataFact>,
+    private dataFactRepository: EntityRepository<DataFact>,
   ) {}
 
   async create(createDatumDto: CreateDatumDto) {
-    this.doorReposity.create(createDatumDto);
-    await this.doorReposity.flush();
+    this.dataFactRepository.create(createDatumDto);
+    await this.dataFactRepository.flush();
   }
 
   // findAll() {

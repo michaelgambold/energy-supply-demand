@@ -1,10 +1,11 @@
+import { MikroORM, UseRequestContext } from '@mikro-orm/core';
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { DataService } from '../data/data.service';
 import { CreateDatumDto } from '../data/dto/create-datum.dto';
-import { FuelService } from '../fuel/fuel.service';
-import { RegionService } from '../region/region.service';
+import { DataFact } from '../entities/DataFact.entity';
+import { Fuel } from '../entities/Fuel.entity';
+import { Region } from '../entities/Region.entity';
 import { RealTimeFuelData } from './dto/real-time-fuel-data.dto';
 
 @Injectable()
@@ -14,21 +15,25 @@ export class DataScraperService {
     'https://ausrealtimefueltype.global-roam.com/api/SeriesSnapshot?time=';
 
   constructor(
-    private httpService: HttpService,
-    private dataService: DataService,
-    private fuelService: FuelService,
-    private regionService: RegionService,
+    private readonly httpService: HttpService,
+    private readonly orm: MikroORM,
   ) {}
 
   @Cron('30 * * * * *')
+  @UseRequestContext()
   async scrapeData() {
     this.logger.log('Scraping data');
+
+    const dataFactRepository = this.orm.em.getRepository(DataFact);
+    const fuelRepository = this.orm.em.getRepository(Fuel);
+    const regionRepository = this.orm.em.getRepository(Region);
+
     this.httpService.get<RealTimeFuelData>(this.url).subscribe(async (data) => {
       try {
         const dataPoints: CreateDatumDto[] = [];
         const [fuels, regions] = await Promise.all([
-          this.fuelService.findAll(),
-          this.regionService.findAll(),
+          fuelRepository.findAll(),
+          regionRepository.findAll(),
         ]);
 
         for (const item of data.data.seriesCollection) {
@@ -54,8 +59,9 @@ export class DataScraperService {
         }
 
         for (const dataPoint of dataPoints) {
-          await this.dataService.create(dataPoint);
+          dataFactRepository.create(dataPoint);
         }
+        await dataFactRepository.flush();
       } catch (e) {
         this.logger.error('Failed to scrape data');
         this.logger.error(e.message);
