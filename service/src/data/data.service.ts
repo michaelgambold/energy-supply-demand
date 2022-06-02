@@ -3,6 +3,7 @@ import { EntityRepository } from '@mikro-orm/postgresql';
 import { Injectable, Logger } from '@nestjs/common';
 import { CreateDatumDto } from './dto/create-datum.dto';
 import { DataFact } from '../entities/DataFact.entity';
+import { distinct } from 'rxjs';
 
 @Injectable()
 export class DataService {
@@ -12,6 +13,19 @@ export class DataService {
     @InjectRepository(DataFact)
     private dataFactRepository: EntityRepository<DataFact>,
   ) {}
+
+  async findLatestData(limit: number) {
+    // get latest timstamps
+    const qb = this.dataFactRepository
+      .createQueryBuilder()
+      .select('timestamp', true)
+      .orderBy({ timestamp: 'desc' })
+      .limit(limit);
+
+    const timestamps = (await qb.execute()).map((x) => x.timestamp);
+
+    return this.dataFactRepository.find({ timestamp: timestamps });
+  }
 
   // async create(createDatumDto: CreateDatumDto) {
   //   this.dataFactRepository.create(createDatumDto);

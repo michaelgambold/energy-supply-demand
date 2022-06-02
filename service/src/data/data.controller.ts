@@ -23,10 +23,10 @@ export class DataController {
   //   return this.dataService.create(createDatumDto);
   // }
 
-  // @Get()
-  // findAll() {
-  //   return this.dataService.findAll();
-  // }
+  @Get()
+  findLatestData() {
+    return this.dataService.findLatestData(500);
+  }
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {
