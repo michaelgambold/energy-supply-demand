@@ -3,10 +3,11 @@ import { DataService } from './data.service';
 import { DataController } from './data.controller';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { DataFact } from '../entities/DataFact.entity';
+import { DataGateway } from './data.gateway';
 
 @Module({
   imports: [MikroOrmModule.forFeature([DataFact])],
   controllers: [DataController],
-  providers: [DataService],
+  providers: [DataService, DataGateway],
 })
 export class DataModule {}

@@ -11,6 +11,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { DataModule } from './data/data.module';
 import { FuelModule } from './fuel/fuel.module';
 import { RegionModule } from './region/region.module';
+import { SocketModule } from './socket/socket.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { RegionModule } from './region/region.module';
     DataModule,
     FuelModule,
     RegionModule,
+    SocketModule,
   ],
   controllers: [],
   providers: [],
