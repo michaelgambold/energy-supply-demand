@@ -12,7 +12,7 @@ import { DataService } from './data.service';
 import { CreateDatumDto } from './dto/create-datum.dto';
 // import { UpdateDatumDto } from './dto/update-datum.dto';
 
-@Controller('api/data')
+@Controller('api/v1/data')
 export class DataController {
   private readonly logger = new Logger(DataController.name);
 
