@@ -17,6 +17,7 @@ import { SocketModule } from './socket/socket.module';
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', 'web', 'dist'),
+      renderPath: '/',
     }),
     ConfigModule.forRoot(),
     MikroOrmModule.forRoot(),
