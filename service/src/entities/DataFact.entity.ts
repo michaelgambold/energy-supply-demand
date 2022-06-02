@@ -23,6 +23,6 @@ export class DataFact {
   @ManyToOne()
   fuel!: Fuel;
 
-  @Property()
+  @ManyToOne()
   region!: Region;
 }

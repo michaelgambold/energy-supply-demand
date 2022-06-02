@@ -162,14 +162,14 @@
           "nullable": false,
           "mappedType": "integer"
         },
-        "region": {
-          "name": "region",
-          "type": "varchar(255)",
+        "region_id": {
+          "name": "region_id",
+          "type": "int",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "string"
+          "mappedType": "integer"
         }
       },
       "name": "data_fact",
@@ -197,6 +197,18 @@
             "id"
           ],
           "referencedTableName": "public.fuel",
+          "updateRule": "cascade"
+        },
+        "data_fact_region_id_foreign": {
+          "constraintName": "data_fact_region_id_foreign",
+          "columnNames": [
+            "region_id"
+          ],
+          "localTableName": "public.data_fact",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.region",
           "updateRule": "cascade"
         }
       }
