@@ -8,6 +8,5 @@ import { DataFact } from '../entities/DataFact.entity';
   imports: [MikroOrmModule.forFeature([DataFact])],
   controllers: [DataController],
   providers: [DataService],
-  exports: [DataService],
 })
 export class DataModule {}

@@ -13,10 +13,10 @@ export class DataService {
     private dataFactRepository: EntityRepository<DataFact>,
   ) {}
 
-  async create(createDatumDto: CreateDatumDto) {
-    this.dataFactRepository.create(createDatumDto);
-    await this.dataFactRepository.flush();
-  }
+  // async create(createDatumDto: CreateDatumDto) {
+  //   this.dataFactRepository.create(createDatumDto);
+  //   await this.dataFactRepository.flush();
+  // }
 
   // findAll() {
   //   return `This action returns all data`;

@@ -22,7 +22,7 @@ export class DataScraperService {
   @Cron('30 * * * * *')
   @UseRequestContext()
   async scrapeData() {
-    this.logger.log('Scraping data');
+    this.logger.log('Started scraping data');
 
     const dataFactRepository = this.orm.em.getRepository(DataFact);
     const fuelRepository = this.orm.em.getRepository(Fuel);
@@ -62,6 +62,7 @@ export class DataScraperService {
           dataFactRepository.create(dataPoint);
         }
         await dataFactRepository.flush();
+        this.logger.log('Completed scraping data');
       } catch (e) {
         this.logger.error('Failed to scrape data');
         this.logger.error(e.message);

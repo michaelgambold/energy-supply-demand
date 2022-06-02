@@ -4,8 +4,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { FuelSeeder } from './seeders/FuelSeeder';
 import { RegionSeeder } from './seeders/RegionSeeder';
 import { DataScraperModule } from './data-scraper/data-scraper.module';
@@ -27,8 +25,8 @@ import { RegionModule } from './region/region.module';
     FuelModule,
     RegionModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {
   constructor(private readonly orm: MikroORM) {}
