@@ -1,11 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { DashboardPageComponent } from './dashboard/dashboard-page/dashboard-page.component';
+import { HistoricDataPageComponent } from './pages/historic-data-page/historic-data-page.component';
+import { LiveDataPageComponent } from './pages/live-data-page/live-data-page.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: DashboardPageComponent,
+    component: LiveDataPageComponent,
+  },
+  {
+    path: 'historic',
+    component: HistoricDataPageComponent,
   },
 ];
 
