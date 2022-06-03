@@ -24,7 +24,13 @@ export class DataService {
 
     const timestamps = (await qb.execute()).map((x) => x.timestamp);
 
-    return this.dataFactRepository.find({ timestamp: timestamps });
+    return this.dataFactRepository.find(
+      { timestamp: timestamps },
+      {
+        populate: ['fuel', 'region'],
+        orderBy: { timestamp: 'asc' },
+      },
+    );
   }
 
   // async create(createDatumDto: CreateDatumDto) {

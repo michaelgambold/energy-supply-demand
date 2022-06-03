@@ -1,4 +1,4 @@
-export interface Data {
+export class DataDto {
   metadata: {
     fuels: Fuel[];
     regions: Region[];
@@ -6,20 +6,20 @@ export interface Data {
   data: DataPoint[];
 }
 
-export interface Fuel {
+class Fuel {
   id: number;
   name: string;
   type: string;
 }
 
-export interface Region {
+class Region {
   id: number;
   name: string;
   abbreviation: string;
   timezone: string;
 }
 
-interface DataPoint {
+class DataPoint {
   timestamp: Date;
   value: number;
   fuelId: number;

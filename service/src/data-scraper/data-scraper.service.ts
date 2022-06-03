@@ -19,7 +19,7 @@ export class DataScraperService {
     private readonly orm: MikroORM,
   ) {}
 
-  // @Cron('30 * * * * *')
+  @Cron('30 * * * * *')
   @UseRequestContext()
   async scrapeData() {
     this.logger.log('Started scraping data');

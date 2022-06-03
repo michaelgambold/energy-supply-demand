@@ -17,13 +17,12 @@ export class DataGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   // constructor(private readonly socketService: SocketService) {
   constructor() {
-    setInterval(() => {
-      console.log('emitting hello to ' + this.wsClients.length + ' clients');
-
-      this.wsClients.forEach((c) => {
-        c.emit('hello', '🐈');
-      });
-    }, 10000);
+    // setInterval(() => {
+    //   console.log('emitting hello to ' + this.wsClients.length + ' clients');
+    //   this.wsClients.forEach((c) => {
+    //     c.emit('hello', '🐈');
+    //   });
+    // }, 10000);
   }
 
   handleDisconnect(client: any) {
