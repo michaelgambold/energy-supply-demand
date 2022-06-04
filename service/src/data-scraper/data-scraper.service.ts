@@ -20,7 +20,7 @@ export class DataScraperService {
     private readonly orm: MikroORM,
   ) {}
 
-  @Cron('30 * * * * *')
+  @Cron('30,40 * * * * *')
   @UseRequestContext()
   async scrapeData() {
     this.logger.log('Started scraping data');
@@ -41,10 +41,6 @@ export class DataScraperService {
 
         for (const item of data.data.seriesCollection) {
           const fuel = fuels.find((x) => x.ref === item.metadata.fuelType.id);
-          const region = regions.find((x) => x.ref === item.metadata.region.id);
-          const power = powers.find(
-            (x) => x.ref === item.metadata.discriminator,
-          );
 
           if (!fuel) {
             this.logger.warn(
@@ -53,6 +49,8 @@ export class DataScraperService {
             continue;
           }
 
+          const region = regions.find((x) => x.ref === item.metadata.region.id);
+
           if (!region) {
             this.logger.warn(
               `Region (${item.metadata.region.id}, ${item.metadata.region.name}) not found...skipping record`,
@@ -60,10 +58,29 @@ export class DataScraperService {
             continue;
           }
 
+          const power = powers.find(
+            (x) => x.ref === item.metadata.discriminator,
+          );
+
           if (!power) {
             this.logger.warn(
               `Power (${item.metadata.discriminator}) not found...skipping record`,
             );
+            continue;
+          }
+
+          // get previous data point from the database for this series
+          // this is NOT a scaleable solution for this as query is done for EVERY data point
+          // and may be a long query to find this (depending on database indexing etc)
+          const prevDataPoint = await dataFactRepository.findOne({
+            fuel,
+            region,
+            power,
+            timestamp: item.timeStamp,
+          });
+
+          // skip this point if it already been processed
+          if (prevDataPoint) {
             continue;
           }
 
