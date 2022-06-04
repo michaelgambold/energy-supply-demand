@@ -240,6 +240,42 @@
       "schema": "public",
       "indexes": [
         {
+          "columnNames": [
+            "timestamp"
+          ],
+          "composite": false,
+          "keyName": "timestamp_index",
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "fuel_id"
+          ],
+          "composite": false,
+          "keyName": "fuel_index",
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "region_id"
+          ],
+          "composite": false,
+          "keyName": "region_index",
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "power_id"
+          ],
+          "composite": false,
+          "keyName": "power_index",
+          "primary": false,
+          "unique": false
+        },
+        {
           "keyName": "data_fact_pkey",
           "columnNames": [
             "uuid"

@@ -1,5 +1,6 @@
 import {
   Entity,
+  Index,
   ManyToOne,
   OneToMany,
   PrimaryKey,
@@ -15,18 +16,22 @@ export class DataFact {
   @PrimaryKey()
   uuid = v4();
 
+  @Index({ name: 'timestamp_index' })
   @Property()
   timestamp: Date;
 
   @Property()
   value: number;
 
+  @Index({ name: 'fuel_index' })
   @ManyToOne()
   fuel!: Fuel;
 
+  @Index({ name: 'region_index' })
   @ManyToOne()
   region!: Region;
 
+  @Index({ name: 'power_index' })
   @ManyToOne()
   power!: Power;
 }
