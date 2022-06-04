@@ -5,6 +5,7 @@ import { Cron } from '@nestjs/schedule';
 import { CreateDatumDto } from '../data/dto/create-datum.dto';
 import { DataFact } from '../entities/DataFact.entity';
 import { Fuel } from '../entities/Fuel.entity';
+import { Power } from '../entities/Power.entity';
 import { Region } from '../entities/Region.entity';
 import { RealTimeFuelData } from './dto/real-time-fuel-data.dto';
 
@@ -27,31 +28,48 @@ export class DataScraperService {
     const dataFactRepository = this.orm.em.getRepository(DataFact);
     const fuelRepository = this.orm.em.getRepository(Fuel);
     const regionRepository = this.orm.em.getRepository(Region);
+    const powerRepository = this.orm.em.getRepository(Power);
 
     this.httpService.get<RealTimeFuelData>(this.url).subscribe(async (data) => {
       try {
         const dataPoints: CreateDatumDto[] = [];
-        const [fuels, regions] = await Promise.all([
+        const [fuels, regions, powers] = await Promise.all([
           fuelRepository.findAll(),
           regionRepository.findAll(),
+          powerRepository.findAll(),
         ]);
 
         for (const item of data.data.seriesCollection) {
           const fuel = fuels.find((x) => x.ref === item.metadata.fuelType.id);
           const region = regions.find((x) => x.ref === item.metadata.region.id);
+          const power = powers.find(
+            (x) => x.ref === item.metadata.discriminator,
+          );
 
           if (!fuel) {
-            this.logger.warn('Fuel not found...skipping record');
+            this.logger.warn(
+              `Fuel (${item.metadata.fuelType.id}, ${item.metadata.fuelType.name}) not found...skipping record`,
+            );
             continue;
           }
 
           if (!region) {
-            this.logger.warn('Region not found...skipping record');
+            this.logger.warn(
+              `Region (${item.metadata.region.id}, ${item.metadata.region.name}) not found...skipping record`,
+            );
+            continue;
+          }
+
+          if (!power) {
+            this.logger.warn(
+              `Power (${item.metadata.discriminator}) not found...skipping record`,
+            );
             continue;
           }
 
           dataPoints.push({
             fuel,
+            power,
             region,
             timestamp: new Date(item.timeStamp),
             value: item.value,

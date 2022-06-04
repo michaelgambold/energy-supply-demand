@@ -7,6 +7,7 @@ import {
 } from '@mikro-orm/core';
 import { v4 } from 'uuid';
 import { Fuel } from './Fuel.entity';
+import { Power } from './Power.entity';
 import { Region } from './Region.entity';
 
 @Entity()
@@ -25,4 +26,7 @@ export class DataFact {
 
   @ManyToOne()
   region!: Region;
+
+  @ManyToOne()
+  power!: Power;
 }

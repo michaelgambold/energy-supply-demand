@@ -12,6 +12,7 @@ import { DataModule } from './data/data.module';
 import { FuelModule } from './fuel/fuel.module';
 import { RegionModule } from './region/region.module';
 import { SocketModule } from './socket/socket.module';
+import { PowerSeeder } from './seeders/PowerSeeder';
 
 @Module({
   imports: [
@@ -36,6 +37,6 @@ export class AppModule {
 
   async onModuleInit(): Promise<void> {
     await this.orm.getMigrator().up();
-    await this.orm.getSeeder().seed(FuelSeeder, RegionSeeder);
+    await this.orm.getSeeder().seed(FuelSeeder, RegionSeeder, PowerSeeder);
   }
 }

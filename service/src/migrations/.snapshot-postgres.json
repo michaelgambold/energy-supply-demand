@@ -107,6 +107,61 @@
           "mappedType": "string"
         }
       },
+      "name": "power",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "power_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "unsigned": true,
+          "autoincrement": true,
+          "primary": true,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        },
+        "ref": {
+          "name": "ref",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        }
+      },
       "name": "fuel",
       "schema": "public",
       "indexes": [
@@ -170,6 +225,15 @@
           "primary": false,
           "nullable": false,
           "mappedType": "integer"
+        },
+        "power_id": {
+          "name": "power_id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
         }
       },
       "name": "data_fact",
@@ -209,6 +273,18 @@
             "id"
           ],
           "referencedTableName": "public.region",
+          "updateRule": "cascade"
+        },
+        "data_fact_power_id_foreign": {
+          "constraintName": "data_fact_power_id_foreign",
+          "columnNames": [
+            "power_id"
+          ],
+          "localTableName": "public.data_fact",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.power",
           "updateRule": "cascade"
         }
       }
