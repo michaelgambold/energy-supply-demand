@@ -27,7 +27,7 @@ export class DataService {
     return this.dataFactRepository.find(
       { timestamp: timestamps },
       {
-        populate: ['fuel', 'region'],
+        populate: ['fuel', 'region', 'power'],
         orderBy: { timestamp: 'asc' },
       },
     );

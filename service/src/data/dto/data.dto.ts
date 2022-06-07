@@ -2,6 +2,7 @@ export class DataDto {
   metadata: {
     fuels: Fuel[];
     regions: Region[];
+    power: Power[];
   };
   data: DataPoint[];
 }
@@ -9,7 +10,7 @@ export class DataDto {
 class Fuel {
   id: number;
   name: string;
-  type: string;
+  type: 'green' | 'fossil' | 'unknown';
 }
 
 class Region {
@@ -17,6 +18,12 @@ class Region {
   name: string;
   abbreviation: string;
   timezone: string;
+}
+
+class Power {
+  id: number;
+  name: string;
+  type: 'generation' | 'demand';
 }
 
 class DataPoint {

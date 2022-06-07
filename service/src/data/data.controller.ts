@@ -1,19 +1,8 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Logger,
-} from '@nestjs/common';
+import { Controller, Get, Logger } from '@nestjs/common';
 import { Fuel } from '../entities/Fuel.entity';
+import { Power } from '../entities/Power.entity';
 import { Region } from '../entities/Region.entity';
-import { FuelService } from '../fuel/fuel.service';
-import { RegionService } from '../region/region.service';
 import { DataService } from './data.service';
-import { CreateDatumDto } from './dto/create-datum.dto';
 import { DataDto } from './dto/data.dto';
 // import { UpdateDatumDto } from './dto/update-datum.dto';
 
@@ -21,11 +10,7 @@ import { DataDto } from './dto/data.dto';
 export class DataController {
   private readonly logger = new Logger(DataController.name);
 
-  constructor(
-    private readonly dataService: DataService,
-    private readonly fuelService: FuelService,
-    private readonly regionService: RegionService,
-  ) {}
+  constructor(private readonly dataService: DataService) {}
 
   // @Post()
   // create(@Body() createDatumDto: CreateDatumDto) {
@@ -37,6 +22,7 @@ export class DataController {
     const data = await this.dataService.findLatestData(500);
     const fuels = new Set<Fuel>();
     const regions = new Set<Region>();
+    const power = new Set<Power>();
     const dataPoints: {
       fuelId: number;
       regionId: number;
@@ -47,6 +33,7 @@ export class DataController {
     data.forEach((dataPoint) => {
       fuels.add(dataPoint.fuel);
       regions.add(dataPoint.region);
+      power.add(dataPoint.power);
       dataPoints.push({
         fuelId: dataPoint.fuel.id,
         regionId: dataPoint.region.id,
@@ -61,6 +48,7 @@ export class DataController {
         regions: Array.from(regions).sort((a, b) =>
           a.name.localeCompare(b.name),
         ),
+        power: Array.from(power).sort((a, b) => a.name.localeCompare(b.name)),
       },
       data: dataPoints,
     };
