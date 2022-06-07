@@ -8,6 +8,9 @@ import { HighchartsChartModule } from 'highcharts-angular';
 import { LineChartComponent } from './components/line-chart/line-chart.component';
 import { FuelsToLineSeriesPipe } from './pipes/fuels-to-line-series.pipe';
 import { DataToLineDataPointsPipe } from './pipes/data-to-line-data-points.pipe';
+import { FilterDataByFuelPipe } from './pipes/filter-data-by-fuel.pipe';
+import { FilterDataByRegionPipe } from './pipes/filter-data-by-region.pipe';
+import { FilterDataByPowerPipe } from './pipes/filter-data-by-power.pipe';
 
 @NgModule({
   declarations: [
@@ -15,6 +18,9 @@ import { DataToLineDataPointsPipe } from './pipes/data-to-line-data-points.pipe'
     LineChartComponent,
     FuelsToLineSeriesPipe,
     DataToLineDataPointsPipe,
+    FilterDataByFuelPipe,
+    FilterDataByRegionPipe,
+    FilterDataByPowerPipe,
   ],
   imports: [
     CommonModule,
@@ -28,6 +34,9 @@ import { DataToLineDataPointsPipe } from './pipes/data-to-line-data-points.pipe'
     LineChartComponent,
     FuelsToLineSeriesPipe,
     DataToLineDataPointsPipe,
+    FilterDataByFuelPipe,
+    FilterDataByRegionPipe,
+    FilterDataByPowerPipe,
   ],
 })
 export class SharedModule {}

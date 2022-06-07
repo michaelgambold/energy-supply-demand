@@ -20,6 +20,9 @@ export class LineChartComponent implements OnInit, OnChanges {
   @Input()
   data!: LineDataPoint[];
 
+  @Input()
+  title!: string;
+
   Highcharts: typeof Highcharts = Highcharts; // required
   chartConstructor: string = 'chart'; // optional string, defaults to 'chart'
   chartOptions: Highcharts.Options = {
@@ -31,7 +34,6 @@ export class LineChartComponent implements OnInit, OnChanges {
       type: 'datetime',
     },
   }; // required
-  // chartCallback: Highcharts.ChartCallbackFunction = function (chart) { ... } // optional function, defaults to null
   updateFlag: boolean = false; // optional boolean
   oneToOneFlag: boolean = true; // optional boolean, defaults to false
   runOutsideAngularFlag: boolean = false; // optional boolean, defaults to false
@@ -39,17 +41,22 @@ export class LineChartComponent implements OnInit, OnChanges {
   constructor(private readonly http: HttpClient) {}
 
   ngOnInit(): void {
-    this.updateChartData();
+    console.log(this.title);
+    this.updateChart();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['data'] || changes['series']) {
-      this.updateChartData();
+    if (changes['title'] || changes['data'] || changes['series']) {
+      this.updateChart();
     }
   }
 
-  private updateChartData(): void {
+  private updateChart(): void {
     if (!this.series || !this.data) return;
+
+    this.chartOptions.title = {
+      text: this.title,
+    };
 
     this.chartOptions.series = [];
 

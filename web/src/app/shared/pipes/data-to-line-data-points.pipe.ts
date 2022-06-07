@@ -6,19 +6,9 @@ import { DataPoint } from '../models/data';
   name: 'dataToLineDataPoints',
 })
 export class DataToLineDataPointsPipe implements PipeTransform {
-  transform(value: DataPoint[], args: Arguments): LineDataPoint[] {
-    let dataPoints = value;
-
-    if (args.region) {
-      dataPoints = dataPoints.filter((x) => x.regionId === args.region);
-    }
-
-    if (args.fuel) {
-      dataPoints = dataPoints.filter((x) => x.fuelId === args.fuel);
-    }
-
-    return dataPoints.map((x) => {
-      const seriesId = args.id === 'fuel' ? x.fuelId : x.regionId;
+  transform(value: DataPoint[], id: 'fuel' | 'region'): LineDataPoint[] {
+    return value.map((x) => {
+      const seriesId = id === 'fuel' ? x.fuelId : x.regionId;
       console.log(new Date(x.timestamp).valueOf());
       return {
         seriesId,
@@ -27,10 +17,4 @@ export class DataToLineDataPointsPipe implements PipeTransform {
       };
     });
   }
-}
-
-interface Arguments {
-  id: 'fuel' | 'region';
-  fuel?: number;
-  region?: number;
 }

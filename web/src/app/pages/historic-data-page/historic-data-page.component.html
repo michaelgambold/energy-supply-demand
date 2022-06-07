@@ -1,15 +1,70 @@
-<h1>Historic Data</h1>
+<!-- <div class="grid-container">
+  <h1 class="mat-h1">Dashboard</h1>
+  <mat-grid-list cols="2" rowHeight="350px">
+    <mat-grid-tile
+      *ngFor="let card of data. | async"
+      [colspan]="card.cols"
+      [rowspan]="card.rows"
+    >
+      <mat-card class="dashboard-card">
+        <mat-card-header>
+          <mat-card-title>
+            {{ card.title }}
+            <button
+              mat-icon-button
+              class="more-button"
+              [matMenuTriggerFor]="menu"
+              aria-label="Toggle menu"
+            >
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu" xPosition="before">
+              <button mat-menu-item>Expand</button>
+              <button mat-menu-item>Remove</button>
+            </mat-menu>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="dashboard-card-content">
+          <div>Card Content Here</div>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div> -->
 
-<!-- date range -->
+<div>
+  <h1>Historic Data</h1>
 
-<div *ngFor="let region of data?.metadata?.regions; let i = index">
-  <h4>{{ region.name }}</h4>
-  <!-- fuel filters -->
-  <app-line-chart
-    *ngIf="data"
-    [series]="data.metadata.fuels | fuelsToLineSeries"
-    [data]="data.data | dataToLineDataPoints: { id: 'fuel', region: region.id }"
-  ></app-line-chart>
+  <!-- date range -->
+
+  <mat-card></mat-card>
+  <ng-container *ngIf="data$ | async as data">
+    <div *ngFor="let region of data?.metadata?.regions; let i = index">
+      <h2>{{ region.name }}</h2>
+      <!-- fuel filters -->
+      <app-line-chart
+        *ngIf="data"
+        [title]="region.name + ' Generation'"
+        [series]="data.metadata.fuels | fuelsToLineSeries"
+        [data]="
+          data.data
+            | filterDataByRegion: region.id
+            | filterDataByPower: generatePowerId
+            | dataToLineDataPoints: 'fuel'
+        "
+      ></app-line-chart>
+
+      <app-line-chart
+        *ngIf="data"
+        [title]="region.name + ' Demand'"
+        [series]="data.metadata.fuels | fuelsToLineSeries"
+        [data]="
+          data.data
+            | filterDataByRegion: region.id
+            | filterDataByPower: demandPowerId
+            | dataToLineDataPoints: 'fuel'
+        "
+      ></app-line-chart>
+    </div>
+  </ng-container>
 </div>
-
-<!-- <pre>{{ data | json }}</pre> -->
