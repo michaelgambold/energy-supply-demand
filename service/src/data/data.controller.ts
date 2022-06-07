@@ -25,6 +25,7 @@ export class DataController {
     const power = new Set<Power>();
     const dataPoints: {
       fuelId: number;
+      powerId: number;
       regionId: number;
       timestamp: Date;
       value: number;
@@ -39,6 +40,7 @@ export class DataController {
         regionId: dataPoint.region.id,
         timestamp: dataPoint.timestamp,
         value: dataPoint.value,
+        powerId: dataPoint.power.id,
       });
     });
 

@@ -31,4 +31,5 @@ class DataPoint {
   value: number;
   fuelId: number;
   regionId: number;
+  powerId: number;
 }
