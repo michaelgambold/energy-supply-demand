@@ -13,7 +13,6 @@ export class FuelService {
   ) {}
 
   findAll() {
-    this.logger.log('Finding all fuel');
     return this.fuelRepository.findAll();
   }
 

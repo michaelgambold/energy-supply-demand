@@ -1,15 +1,9 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Logger,
-} from '@nestjs/common';
+import { Controller, Get, Logger } from '@nestjs/common';
+import { Fuel } from '../entities/Fuel.entity';
+import { Power } from '../entities/Power.entity';
+import { Region } from '../entities/Region.entity';
 import { DataService } from './data.service';
-import { CreateDatumDto } from './dto/create-datum.dto';
+import { DataDto } from './dto/data.dto';
 // import { UpdateDatumDto } from './dto/update-datum.dto';
 
 @Controller('api/v1/data')
@@ -24,8 +18,42 @@ export class DataController {
   // }
 
   @Get()
-  findLatestData() {
-    return this.dataService.findLatestData(500);
+  async findLatestData(): Promise<DataDto> {
+    const data = await this.dataService.findLatestData(500);
+    const fuels = new Set<Fuel>();
+    const regions = new Set<Region>();
+    const power = new Set<Power>();
+    const dataPoints: {
+      fuelId: number;
+      powerId: number;
+      regionId: number;
+      timestamp: Date;
+      value: number;
+    }[] = [];
+
+    data.forEach((dataPoint) => {
+      fuels.add(dataPoint.fuel);
+      regions.add(dataPoint.region);
+      power.add(dataPoint.power);
+      dataPoints.push({
+        fuelId: dataPoint.fuel.id,
+        regionId: dataPoint.region.id,
+        timestamp: dataPoint.timestamp,
+        value: dataPoint.value,
+        powerId: dataPoint.power.id,
+      });
+    });
+
+    return {
+      metadata: {
+        fuels: Array.from(fuels).sort((a, b) => a.name.localeCompare(b.name)),
+        regions: Array.from(regions).sort((a, b) =>
+          a.name.localeCompare(b.name),
+        ),
+        power: Array.from(power).sort((a, b) => a.name.localeCompare(b.name)),
+      },
+      data: dataPoints,
+    };
   }
 
   // @Get(':id')

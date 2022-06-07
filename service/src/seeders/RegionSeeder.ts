@@ -51,7 +51,7 @@ export class RegionSeeder extends Seeder {
         region.abbreviation = item.abbreviation;
         region.name = item.name;
         region.timezone = item.timezone;
-        region;
+        return;
       }
 
       em.create(Region, {
