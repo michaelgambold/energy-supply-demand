@@ -23,6 +23,11 @@ services:
       - energy
     environment:
       POSTGRES_PASSWORD: password
+    volumes:
+      - postgres:/var/lib/postgresql/data
 
 networks:
   energy:
+
+volumes:
+  postgres:

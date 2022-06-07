@@ -18,7 +18,6 @@ import { PowerSeeder } from './seeders/PowerSeeder';
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', 'web', 'dist'),
-      renderPath: '/',
     }),
     ConfigModule.forRoot(),
     MikroOrmModule.forRoot(),
