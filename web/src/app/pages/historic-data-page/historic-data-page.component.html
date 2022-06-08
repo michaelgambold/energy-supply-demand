@@ -32,7 +32,7 @@
   <!-- ./header -->
 
   <!-- region tab bar -->
-  <div *ngIf="regions$ | async as regions; else spinner">
+  <div class="pb-8" *ngIf="regions$ | async as regions; else spinner">
     <mat-tab-group (selectedTabChange)="onRegionTabChange($event, regions)">
       <mat-tab *ngFor="let region of regions" [label]="region.name"
         ><ng-container [ngTemplateOutlet]="regionData"></ng-container
@@ -45,35 +45,33 @@
 </mat-drawer-container>
 
 <ng-template #regionData>
-  <ng-container *ngIf="data$ | async as data; else spinner">
-    <div *ngFor="let region of data?.metadata?.regions; let i = index">
-      <h2>{{ region.name }}</h2>
-      <!-- fuel filters -->
-      <app-line-chart
-        *ngIf="data"
-        [title]="region.name + ' Generation'"
-        [series]="data.metadata.fuels | fuelsToLineSeries"
-        [data]="
-          data.data
-            | filterDataByRegion: region.id
-            | filterDataByPower: generatePowerId
-            | dataToLineDataPoints: 'fuel'
-        "
-      ></app-line-chart>
+  <div class="pt-4" *ngIf="data$ | async as data; else spinner">
+    <h2>{{ selectedRegion?.name }}</h2>
+    <!-- fuel filters -->
+    <app-line-chart
+      *ngIf="data"
+      [title]="'Generation'"
+      [series]="data.metadata.fuels | fuelsToLineSeries"
+      [data]="
+        data.data
+          | filterDataByRegion: selectedRegion.id
+          | filterDataByPower: generatePowerId
+          | dataToLineDataPoints: 'fuel'
+      "
+    ></app-line-chart>
 
-      <app-line-chart
-        *ngIf="data"
-        [title]="region.name + ' Demand'"
-        [series]="data.metadata.fuels | fuelsToLineSeries"
-        [data]="
-          data.data
-            | filterDataByRegion: region.id
-            | filterDataByPower: demandPowerId
-            | dataToLineDataPoints: 'fuel'
-        "
-      ></app-line-chart>
-    </div>
-  </ng-container>
+    <app-line-chart
+      *ngIf="data"
+      [title]="'Demand'"
+      [series]="data.metadata.fuels | fuelsToLineSeries"
+      [data]="
+        data.data
+          | filterDataByRegion: selectedRegion.id
+          | filterDataByPower: demandPowerId
+          | dataToLineDataPoints: 'fuel'
+      "
+    ></app-line-chart>
+  </div>
 </ng-template>
 
 <ng-template #spinner>

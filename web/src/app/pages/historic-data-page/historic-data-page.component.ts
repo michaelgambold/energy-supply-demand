@@ -23,6 +23,7 @@ export class HistoricDataPageComponent implements OnInit {
 
   selectedTimeRange = 'Last Hour';
   selectedPeriod = '1 Minute';
+  selectedRegion!: Region;
 
   timeRanges = [
     'Last Hour',
@@ -46,8 +47,6 @@ export class HistoricDataPageComponent implements OnInit {
   fuels: Fuel[] = [];
   regions: Region[] = [];
   power: Power[] = [];
-
-  private selectedRegion: unknown;
 
   constructor(
     private readonly dataService: DataService,
@@ -76,23 +75,29 @@ export class HistoricDataPageComponent implements OnInit {
     console.log(`period: ${this.selectedPeriod}`);
     console.log(`region: ${this.selectedRegion}`);
 
-    this.data$ = this.dataService.getLatestData().pipe(
-      tap((data) => {
-        // save metadata from data response
-        this.fuels = data.metadata.fuels;
-        this.power = data.metadata.power;
-        this.regions = data.metadata.regions;
-
-        const generatePower = data.metadata.power.find(
-          (x) => x.type === 'generation'
-        );
-        this.generatePowerId = generatePower ? generatePower.id : 0;
-
-        const demandPower = data.metadata.power.find(
-          (x) => x.type === 'demand'
-        );
-        this.demandPowerId = demandPower ? demandPower.id : 0;
+    this.data$ = this.dataService
+      .getHistoricData({
+        period: '1Minute',
+        timeRange: '1Hour',
+        regionId: this.selectedRegion.id,
       })
-    );
+      .pipe(
+        tap((data) => {
+          // save metadata from data response
+          this.fuels = data.metadata.fuels;
+          this.power = data.metadata.power;
+          this.regions = data.metadata.regions;
+
+          const generatePower = data.metadata.power.find(
+            (x) => x.type === 'generation'
+          );
+          this.generatePowerId = generatePower ? generatePower.id : 0;
+
+          const demandPower = data.metadata.power.find(
+            (x) => x.type === 'demand'
+          );
+          this.demandPowerId = demandPower ? demandPower.id : 0;
+        })
+      );
   }
 }
