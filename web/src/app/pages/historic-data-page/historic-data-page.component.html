@@ -1,7 +1,8 @@
 <mat-drawer-container class="p-4 h-screen">
+  <!-- header -->
   <div class="flex justify-between">
     <h1>Historic Data</h1>
-    <!-- date range & resolution -->
+    <!-- time range & period selector -->
     <div class="flex justify-end gap-x-4">
       <mat-form-field>
         <mat-label>Time Range</mat-label>
@@ -26,9 +27,24 @@
         </mat-select>
       </mat-form-field>
     </div>
+    <!-- ./time range & period selector -->
   </div>
+  <!-- ./header -->
+
+  <!-- region tab bar -->
+  <div *ngIf="regions$ | async as regions; else spinner">
+    <mat-tab-group (selectedTabChange)="onRegionTabChange($event, regions)">
+      <mat-tab *ngFor="let region of regions" [label]="region.name"
+        ><ng-container [ngTemplateOutlet]="regionData"></ng-container
+      ></mat-tab>
+    </mat-tab-group>
+  </div>
+  <!-- ./region tab bar -->
 
   <!-- <mat-card><mat-card-content>asdfsdff</mat-card-content></mat-card> -->
+</mat-drawer-container>
+
+<ng-template #regionData>
   <ng-container *ngIf="data$ | async as data; else spinner">
     <div *ngFor="let region of data?.metadata?.regions; let i = index">
       <h2>{{ region.name }}</h2>
@@ -58,7 +74,7 @@
       ></app-line-chart>
     </div>
   </ng-container>
-</mat-drawer-container>
+</ng-template>
 
 <ng-template #spinner>
   <div class="flex justify-center py-16">

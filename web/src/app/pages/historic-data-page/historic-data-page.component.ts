@@ -1,4 +1,5 @@
-import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { Observable, tap } from 'rxjs';
 import { Data } from '../../shared/models/data';
 import { Fuel } from '../../shared/models/fuel';
@@ -6,16 +7,20 @@ import { Power } from '../../shared/models/power';
 import { Region } from '../../shared/models/region';
 
 import { DataService } from '../../shared/services/data.service';
+import { RegionService } from '../../shared/services/region.service';
 
 @Component({
   selector: 'app-historic-data-page',
   templateUrl: './historic-data-page.component.html',
   styleUrls: ['./historic-data-page.component.css'],
 })
-export class HistoricDataPageComponent implements OnInit, OnChanges {
+export class HistoricDataPageComponent implements OnInit {
   data$!: Observable<Data>;
+  regions$!: Observable<Region[]>;
+
   demandPowerId = 0;
   generatePowerId = 0;
+
   selectedTimeRange = 'Last Hour';
   selectedPeriod = '1 Minute';
 
@@ -42,19 +47,34 @@ export class HistoricDataPageComponent implements OnInit, OnChanges {
   regions: Region[] = [];
   power: Power[] = [];
 
-  constructor(private readonly dataService: DataService) {}
+  private selectedRegion: unknown;
+
+  constructor(
+    private readonly dataService: DataService,
+    private readonly regionService: RegionService
+  ) {}
 
   ngOnInit(): void {
-    this.refreshData();
+    this.regions$ = this.regionService.getAll().pipe(
+      tap((regions) => {
+        if (regions.length) {
+          this.selectedRegion = regions[0];
+          this.refreshData();
+        }
+      })
+    );
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
+  onRegionTabChange(event: MatTabChangeEvent, regions: Region[]): void {
+    console.log('region tab changed');
+    this.selectedRegion = regions[event.index];
+    this.refreshData();
   }
 
   refreshData() {
     console.log(`time range: ${this.selectedTimeRange}`);
     console.log(`period: ${this.selectedPeriod}`);
+    console.log(`region: ${this.selectedRegion}`);
 
     this.data$ = this.dataService.getLatestData().pipe(
       tap((data) => {
