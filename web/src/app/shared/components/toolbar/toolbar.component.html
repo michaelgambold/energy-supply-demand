@@ -1,5 +1,10 @@
 <mat-toolbar color="primary">
-  <span>Energy Supply & Demand</span>
+  <div class="grid grid-flow-col auto-cols-max gap-4">
+    <span>Energy Supply & Demand</span>
+    <a [href]="['/']">Live Data</a>
+    <a [href]="['/historic']">Historic Data</a>
+  </div>
+
   <!-- &nbsp;
   <a mat-button [routerLink]="['/']">Dashboard</a>
   <a mat-button [routerLink]="['/historic']">Historic Data</a> -->
