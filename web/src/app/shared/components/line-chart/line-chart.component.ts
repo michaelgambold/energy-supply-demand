@@ -41,7 +41,6 @@ export class LineChartComponent implements OnInit, OnChanges {
   constructor(private readonly http: HttpClient) {}
 
   ngOnInit(): void {
-    console.log(this.title);
     this.updateChart();
   }
 
