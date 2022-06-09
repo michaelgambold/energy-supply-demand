@@ -32,8 +32,8 @@
   <!-- ./header -->
 
   <!-- region tab bar -->
-  <div class="pb-8" *ngIf="regions$ | async as regions; else spinner">
-    <mat-tab-group (selectedTabChange)="onRegionTabChange($event, regions)">
+  <div class="pb-8" *ngIf="regions; else spinner">
+    <mat-tab-group (selectedIndexChange)="onRegionTabChange($event)">
       <mat-tab *ngFor="let region of regions" [label]="region.name"
         ><ng-container [ngTemplateOutlet]="regionData"></ng-container
       ></mat-tab>
@@ -45,31 +45,21 @@
 </mat-drawer-container>
 
 <ng-template #regionData>
-  <div class="pt-4" *ngIf="data$ | async as data; else spinner">
+  <div class="pt-4">
     <h2>{{ selectedRegion?.name }}</h2>
     <!-- fuel filters -->
     <app-line-chart
-      *ngIf="data"
+      *ngIf="generationData$ | async as data; else spinner"
       [title]="'Generation'"
       [series]="data.metadata.fuels | fuelsToLineSeries"
-      [data]="
-        data.data
-          | filterDataByRegion: selectedRegion.id
-          | filterDataByPower: generatePowerId
-          | dataToLineDataPoints: 'fuel'
-      "
+      [data]="data.data | dataToLineDataPoints: 'fuel'"
     ></app-line-chart>
 
     <app-line-chart
-      *ngIf="data"
+      *ngIf="demandData$ | async as data; else spinner"
       [title]="'Demand'"
       [series]="data.metadata.fuels | fuelsToLineSeries"
-      [data]="
-        data.data
-          | filterDataByRegion: selectedRegion.id
-          | filterDataByPower: demandPowerId
-          | dataToLineDataPoints: 'fuel'
-      "
+      [data]="data.data | dataToLineDataPoints: 'fuel'"
     ></app-line-chart>
   </div>
 </ng-template>

@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { Observable, tap } from 'rxjs';
+import { Observable, shareReplay, tap, zip } from 'rxjs';
 import { Data } from '../../shared/models/data';
 import { Fuel } from '../../shared/models/fuel';
 import { Power } from '../../shared/models/power';
 import { Region } from '../../shared/models/region';
 
 import { DataService } from '../../shared/services/data.service';
+import { PowerService } from '../../shared/services/power.service';
 import { RegionService } from '../../shared/services/region.service';
 
 @Component({
@@ -15,11 +16,8 @@ import { RegionService } from '../../shared/services/region.service';
   styleUrls: ['./historic-data-page.component.css'],
 })
 export class HistoricDataPageComponent implements OnInit {
-  data$!: Observable<Data>;
-  regions$!: Observable<Region[]>;
-
-  demandPowerId = 0;
-  generatePowerId = 0;
+  demandData$!: Observable<Data>;
+  generationData$!: Observable<Data>;
 
   selectedTimeRange = 'Last Hour';
   selectedPeriod = '1 Minute';
@@ -44,60 +42,52 @@ export class HistoricDataPageComponent implements OnInit {
     '1 Day',
   ];
 
-  fuels: Fuel[] = [];
-  regions: Region[] = [];
   power: Power[] = [];
+  regions: Region[] = [];
 
   constructor(
     private readonly dataService: DataService,
-    private readonly regionService: RegionService
+    private readonly regionService: RegionService,
+    private readonly powerService: PowerService
   ) {}
 
   ngOnInit(): void {
-    this.regions$ = this.regionService.getAll().pipe(
-      tap((regions) => {
-        if (regions.length) {
-          this.selectedRegion = regions[0];
-          this.refreshData();
-        }
-      })
+    zip([this.powerService.getAll(), this.regionService.getAll()]).subscribe(
+      (res) => {
+        this.power = res[0];
+        this.regions = res[1];
+      }
     );
   }
 
-  onRegionTabChange(event: MatTabChangeEvent, regions: Region[]): void {
+  onRegionTabChange(index: number): void {
     console.log('region tab changed');
-    this.selectedRegion = regions[event.index];
+    this.selectedRegion = this.regions[index];
     this.refreshData();
   }
 
   refreshData() {
-    console.log(`time range: ${this.selectedTimeRange}`);
-    console.log(`period: ${this.selectedPeriod}`);
-    console.log(`region: ${this.selectedRegion}`);
+    console.log('refreshing data');
+    // console.log(`time range: ${this.selectedTimeRange}`);
+    // console.log(`period: ${this.selectedPeriod}`);
+    // console.log(`region: ${this.selectedRegion}`);
 
-    this.data$ = this.dataService
+    this.generationData$ = this.dataService
       .getHistoricData({
         period: '1Minute',
         timeRange: '1Hour',
         regionId: this.selectedRegion.id,
+        powerId: this.power.find((x) => x.type === 'generation')?.id,
       })
-      .pipe(
-        tap((data) => {
-          // save metadata from data response
-          this.fuels = data.metadata.fuels;
-          this.power = data.metadata.power;
-          this.regions = data.metadata.regions;
+      .pipe(shareReplay()); // hack to stop multiple requests
 
-          const generatePower = data.metadata.power.find(
-            (x) => x.type === 'generation'
-          );
-          this.generatePowerId = generatePower ? generatePower.id : 0;
-
-          const demandPower = data.metadata.power.find(
-            (x) => x.type === 'demand'
-          );
-          this.demandPowerId = demandPower ? demandPower.id : 0;
-        })
-      );
+    this.demandData$ = this.dataService
+      .getHistoricData({
+        period: '1Minute',
+        timeRange: '1Hour',
+        regionId: this.selectedRegion.id,
+        powerId: this.power.find((x) => x.type === 'demand')?.id,
+      })
+      .pipe(shareReplay()); // hack to stop multiple requests
   }
 }

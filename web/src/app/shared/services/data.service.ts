@@ -30,6 +30,8 @@ export class DataService {
   getHistoricData(args: {
     timeRange: TimeRange;
     period: Period;
+    fuelId?: number;
+    powerId?: number;
     regionId?: number;
   }): Observable<Data> {
     const urlParams = new URLSearchParams({
@@ -37,10 +39,22 @@ export class DataService {
       period: args.period,
     });
 
+    if (args.fuelId) {
+      urlParams.append('fuel', args.fuelId.toString());
+    }
+
+    if (args.powerId) {
+      urlParams.append('power', args.powerId.toString());
+    }
+
     if (args.regionId) {
       urlParams.append('region', args.regionId.toString());
     }
 
-    return this.http.get<Data>(`/api/v1/data?${urlParams.toString()}`);
+    return this.http.get<Data>(
+      `/api/v1/data/timerange/${args.timeRange}/period/${
+        args.period
+      }?${urlParams.toString()}`
+    );
   }
 }
