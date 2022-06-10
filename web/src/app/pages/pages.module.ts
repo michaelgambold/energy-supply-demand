@@ -5,7 +5,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
-import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
 import { LayoutModule } from '@angular/cdk/layout';
 import { LiveDataPageComponent } from './live-data-page/live-data-page.component';
@@ -23,7 +22,6 @@ import { SharedModule } from '../shared/shared.module';
     LayoutModule,
     MatProgressSpinnerModule,
     MatSelectModule,
-    MatSidenavModule,
     MatTabsModule,
   ],
   exports: [LiveDataPageComponent, HistoricDataPageComponent],
