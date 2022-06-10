@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { MatTabChangeEvent } from '@angular/material/tabs';
-import { Observable, shareReplay, tap, zip } from 'rxjs';
+import { Observable, shareReplay, zip } from 'rxjs';
 import { Data } from '../../shared/models/data';
-import { Fuel } from '../../shared/models/fuel';
 import { Power } from '../../shared/models/power';
 import { Region } from '../../shared/models/region';
 

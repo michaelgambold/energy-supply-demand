@@ -34,9 +34,6 @@ import { PowerSeeder } from './seeders/PowerSeeder';
         };
       },
     }),
-    BullModule.registerQueue({
-      name: 'new-data',
-    }),
     MikroOrmModule.forRoot(),
     ScheduleModule.forRoot(),
     DataScraperModule,
