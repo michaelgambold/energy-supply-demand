@@ -1,70 +1,71 @@
-<!-- <div class="grid-container">
-  <h1 class="mat-h1">Dashboard</h1>
-  <mat-grid-list cols="2" rowHeight="350px">
-    <mat-grid-tile
-      *ngFor="let card of data. | async"
-      [colspan]="card.cols"
-      [rowspan]="card.rows"
-    >
-      <mat-card class="dashboard-card">
-        <mat-card-header>
-          <mat-card-title>
-            {{ card.title }}
-            <button
-              mat-icon-button
-              class="more-button"
-              [matMenuTriggerFor]="menu"
-              aria-label="Toggle menu"
-            >
-              <mat-icon>more_vert</mat-icon>
-            </button>
-            <mat-menu #menu="matMenu" xPosition="before">
-              <button mat-menu-item>Expand</button>
-              <button mat-menu-item>Remove</button>
-            </mat-menu>
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="dashboard-card-content">
-          <div>Card Content Here</div>
-        </mat-card-content>
-      </mat-card>
-    </mat-grid-tile>
-  </mat-grid-list>
-</div> -->
+<div class="p-4">
+  <!-- header -->
+  <div class="block md:flex justify-between">
+    <h1>Historic Data</h1>
+    <!-- time range & period selector -->
+    <div class="block md:flex justify-end gap-x-4">
+      <mat-form-field>
+        <mat-label>Time Range</mat-label>
+        <mat-select
+          [(value)]="selectedTimeRange"
+          (selectionChange)="refreshData()"
+        >
+          <mat-option
+            *ngFor="let timeRange of timeRanges"
+            [value]="timeRange"
+            >{{ timeRange }}</mat-option
+          >
+        </mat-select>
+      </mat-form-field>
 
-<div>
-  <h1>Historic Data</h1>
-
-  <!-- date range -->
-
-  <mat-card></mat-card>
-  <ng-container *ngIf="data$ | async as data">
-    <div *ngFor="let region of data?.metadata?.regions; let i = index">
-      <h2>{{ region.name }}</h2>
-      <!-- fuel filters -->
-      <app-line-chart
-        *ngIf="data"
-        [title]="region.name + ' Generation'"
-        [series]="data.metadata.fuels | fuelsToLineSeries"
-        [data]="
-          data.data
-            | filterDataByRegion: region.id
-            | filterDataByPower: generatePowerId
-            | dataToLineDataPoints: 'fuel'
-        "
-      ></app-line-chart>
-
-      <app-line-chart
-        *ngIf="data"
-        [title]="region.name + ' Demand'"
-        [series]="data.metadata.fuels | fuelsToLineSeries"
-        [data]="
-          data.data
-            | filterDataByRegion: region.id
-            | filterDataByPower: demandPowerId
-            | dataToLineDataPoints: 'fuel'
-        "
-      ></app-line-chart>
+      <mat-form-field>
+        <mat-label>Period</mat-label>
+        <mat-select [(value)]="selectedPeriod" (valueChange)="refreshData()">
+          <mat-option *ngFor="let period of periods" [value]="period">{{
+            period
+          }}</mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
-  </ng-container>
+    <!-- ./time range & period selector -->
+  </div>
+  <!-- ./header -->
+
+  <!-- region tab bar -->
+  <div class="pb-8" *ngIf="regions; else spinner">
+    <mat-tab-group (selectedIndexChange)="onRegionTabChange($event)">
+      <mat-tab *ngFor="let region of regions" [label]="region.name"
+        ><ng-container [ngTemplateOutlet]="regionData"></ng-container
+      ></mat-tab>
+    </mat-tab-group>
+  </div>
+  <!-- ./region tab bar -->
 </div>
+
+<!-- <mat-card><mat-card-content>asdfsdff</mat-card-content></mat-card> -->
+
+<ng-template #regionData>
+  <div class="pt-4">
+    <h2>{{ selectedRegion?.name }}</h2>
+    <!-- fuel filters -->
+    <app-line-chart
+      *ngIf="generationData$ | async as data; else spinner"
+      [title]="'Generation'"
+      [series]="data.metadata.fuels | fuelsToLineSeries"
+      [data]="data.data | dataToLineDataPoints: 'fuel'"
+    ></app-line-chart>
+
+    <app-line-chart
+      *ngIf="demandData$ | async as data; else spinner"
+      [title]="'Demand'"
+      [series]="data.metadata.fuels | fuelsToLineSeries"
+      [data]="data.data | dataToLineDataPoints: 'fuel'"
+    ></app-line-chart>
+  </div>
+</ng-template>
+
+<ng-template #spinner>
+  <div class="flex justify-center py-16">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>

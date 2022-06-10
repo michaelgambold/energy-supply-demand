@@ -9,7 +9,6 @@ export class DataToLineDataPointsPipe implements PipeTransform {
   transform(value: DataPoint[], id: 'fuel' | 'region'): LineDataPoint[] {
     return value.map((x) => {
       const seriesId = id === 'fuel' ? x.fuelId : x.regionId;
-      console.log(new Date(x.timestamp).valueOf());
       return {
         seriesId,
         unixTimestamp: new Date(x.timestamp).valueOf(),

@@ -12,6 +12,7 @@ import { DataModule } from './data/data.module';
 import { FuelModule } from './fuel/fuel.module';
 import { RegionModule } from './region/region.module';
 import { SocketModule } from './socket/socket.module';
+import { PowerModule } from './power/power.module';
 import { PowerSeeder } from './seeders/PowerSeeder';
 
 @Module({
@@ -27,6 +28,7 @@ import { PowerSeeder } from './seeders/PowerSeeder';
     FuelModule,
     RegionModule,
     SocketModule,
+    PowerModule,
   ],
   controllers: [],
   providers: [],

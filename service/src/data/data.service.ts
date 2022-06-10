@@ -1,9 +1,7 @@
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
 import { Injectable, Logger } from '@nestjs/common';
-import { CreateDatumDto } from './dto/create-datum.dto';
 import { DataFact } from '../entities/DataFact.entity';
-import { distinct } from 'rxjs';
 
 @Injectable()
 export class DataService {
@@ -14,43 +12,43 @@ export class DataService {
     private dataFactRepository: EntityRepository<DataFact>,
   ) {}
 
-  async findLatestData(limit: number) {
-    // get latest timstamps
-    const qb = this.dataFactRepository
-      .createQueryBuilder()
-      .select('timestamp', true)
-      .orderBy({ timestamp: 'desc' })
-      .limit(limit);
+  async findDataRange(args: {
+    startDate: Date;
+    endDate: Date;
+    fuelId?: number;
+    powerId?: number;
+    regionId?: number;
+  }) {
+    this.logger.log('Find data range');
 
-    const timestamps = (await qb.execute()).map((x) => x.timestamp);
+    const qb = this.dataFactRepository
+      .qb()
+      .select('uuid')
+      .where({ timestamp: { $gte: args.startDate } })
+      .andWhere({ timestamp: { $lte: args.endDate } });
+
+    if (args.fuelId) {
+      qb.andWhere({ fuel: args.fuelId });
+    }
+
+    if (args.powerId) {
+      qb.andWhere({ power: args.powerId });
+    }
+
+    if (args.regionId) {
+      qb.andWhere({ region: args.regionId });
+    }
+
+    const uuids = (await qb.execute()).map((x) => x.uuid);
 
     return this.dataFactRepository.find(
-      { timestamp: timestamps },
+      {
+        uuid: { $in: uuids },
+      },
       {
         populate: ['fuel', 'region', 'power'],
         orderBy: { timestamp: 'asc' },
       },
     );
   }
-
-  // async create(createDatumDto: CreateDatumDto) {
-  //   this.dataFactRepository.create(createDatumDto);
-  //   await this.dataFactRepository.flush();
-  // }
-
-  // findAll() {
-  //   return `This action returns all data`;
-  // }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} datum`;
-  // }
-
-  // update(id: number, updateDatumDto: UpdateDatumDto) {
-  //   return `This action updates a #${id} datum`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} datum`;
-  // }
 }

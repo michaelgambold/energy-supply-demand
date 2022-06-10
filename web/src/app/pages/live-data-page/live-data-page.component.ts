@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DataService } from '../../shared/services/data.service';
 
 @Component({
-  selector: 'app-dashboard-page',
+  selector: 'app-live-data-page',
   templateUrl: './live-data-page.component.html',
   styleUrls: ['./live-data-page.component.css'],
 })

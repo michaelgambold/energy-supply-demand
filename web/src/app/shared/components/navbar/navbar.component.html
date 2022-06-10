@@ -1,0 +1,46 @@
+<mat-toolbar color="primary">
+  <nav>
+    <mat-toolbar-row>
+      <a mat-button routerLink="/">
+        <mat-icon aria-label="lightning-bolt">bolt</mat-icon>
+        <span>Energy Supply & Demand</span>
+      </a>
+      <a
+        class="invisible md:visible"
+        mat-button
+        [routerLink]="['/']"
+        [routerLinkActiveOptions]="{ exact: true }"
+        routerLinkActive="navbar-link-active"
+        >Live Data</a
+      >
+      <a
+        class="invisible md:visible"
+        mat-button
+        [routerLink]="['/historic']"
+        routerLinkActive="navbar-link-active"
+        >Historic Data</a
+      >
+    </mat-toolbar-row>
+
+    <div class="md:hidden">
+      <mat-toolbar-row>
+        <a
+          class="flex-grow"
+          mat-button
+          [routerLink]="['/']"
+          [routerLinkActiveOptions]="{ exact: true }"
+          routerLinkActive="navbar-link-active"
+          >Live Data2</a
+        >
+
+        <a
+          class="flex-grow"
+          mat-button
+          [routerLink]="['/historic']"
+          routerLinkActive="navbar-link-active"
+          >Historic Data2</a
+        >
+      </mat-toolbar-row>
+    </div>
+  </nav>
+</mat-toolbar>
