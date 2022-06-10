@@ -22,7 +22,7 @@ export class AppComponent {
       console.warn(error);
     });
 
-    this.socket.on('hello', (data) => {
+    this.socket.on('new-data', (data) => {
       console.log(data);
     });
 
