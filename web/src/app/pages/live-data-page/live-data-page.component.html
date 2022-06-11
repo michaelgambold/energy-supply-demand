@@ -1,5 +1,21 @@
-<div class="p4">
-  <p>dashboard-page works!</p>
+<div class="p-4">
+  <h1>Live Data</h1>
 
-  <app-line-chart></app-line-chart>
+  <div *ngIf="data$ | async as data; else spinner">
+    <app-stacked-bar-chart
+      [categories]="data.metadata.regions | regionsToStackedBarCategories"
+      [series]="data.metadata.fuels | fuelsToStackedBarSeries"
+      [data]="
+        data.data
+          | dataToStackedBarDataPoints
+            : { categoryId: 'region', seriesId: 'fuel' }
+      "
+    ></app-stacked-bar-chart>
+  </div>
 </div>
+
+<ng-template #spinner>
+  <div class="flex justify-center py-16">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>

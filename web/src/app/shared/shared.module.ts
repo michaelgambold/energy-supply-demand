@@ -9,6 +9,10 @@ import { HighchartsChartModule } from 'highcharts-angular';
 import { LineChartComponent } from './components/line-chart/line-chart.component';
 import { FuelsToLineSeriesPipe } from './pipes/fuels-to-line-series.pipe';
 import { DataToLineDataPointsPipe } from './pipes/data-to-line-data-points.pipe';
+import { StackedBarChartComponent } from './components/stacked-bar-chart/stacked-bar-chart.component';
+import { RegionsToStackedBarCategoriesPipe } from './pipes/regions-to-stacked-bar-categories';
+import { FuelsToStackedBarSeriesPipe } from './pipes/fuels-to-stacked-bar-series.pipe';
+import { DataToStackedBarDataPointsPipe } from './pipes/data-to-stacked-bar-data-points.pipe';
 
 @NgModule({
   declarations: [
@@ -16,6 +20,10 @@ import { DataToLineDataPointsPipe } from './pipes/data-to-line-data-points.pipe'
     LineChartComponent,
     FuelsToLineSeriesPipe,
     DataToLineDataPointsPipe,
+    StackedBarChartComponent,
+    RegionsToStackedBarCategoriesPipe,
+    FuelsToStackedBarSeriesPipe,
+    DataToStackedBarDataPointsPipe,
   ],
   imports: [
     CommonModule,
@@ -30,6 +38,10 @@ import { DataToLineDataPointsPipe } from './pipes/data-to-line-data-points.pipe'
     LineChartComponent,
     FuelsToLineSeriesPipe,
     DataToLineDataPointsPipe,
+    StackedBarChartComponent,
+    RegionsToStackedBarCategoriesPipe,
+    DataToStackedBarDataPointsPipe,
+    FuelsToStackedBarSeriesPipe,
   ],
 })
 export class SharedModule {}
