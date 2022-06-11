@@ -50,7 +50,7 @@ export class DataGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleNewData(job: Job<DataDto>) {
     this.logger.log('Sending new data to websocket clients');
     for (const wsClient of this.wsClients) {
-      wsClient.send('new-data', job.data);
+      wsClient.emit('new-data', job.data);
     }
   }
 
