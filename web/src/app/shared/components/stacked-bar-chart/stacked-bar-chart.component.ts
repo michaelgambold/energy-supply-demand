@@ -69,8 +69,6 @@ export class StackedBarChartComponent implements OnInit, OnChanges {
   }
 
   private updateChart(): void {
-    console.log();
-
     if (!this.series || !this.data || !this.categories) return;
 
     this.chartOptions.title = {
@@ -81,14 +79,8 @@ export class StackedBarChartComponent implements OnInit, OnChanges {
       categories: this.categories.map((x) => x.name),
     };
 
-    this.chartOptions.series = this.series.map((s, index) => {
-      console.log(s);
-
+    this.chartOptions.series = this.series.map((s) => {
       const seriesDataPoints = this.data.filter((x) => x.seriesId === s.id);
-
-      console.log('series data points');
-      console.log(seriesDataPoints);
-
       return {
         type: 'bar',
         name: s.name,
@@ -97,33 +89,6 @@ export class StackedBarChartComponent implements OnInit, OnChanges {
           return dataPoint ? dataPoint.value : 0;
         }),
       };
-
-      // for each region add datapoints for this series
-
-      /*
-
-      should look something like this
-      [
-        {
-          name: 'Black Coal',
-          data: [WA, VIC, SA]
-        },
-        {
-          naem: 'Wind',
-          data: [WA, VIC, SA]
-        }
-      ]
-
-      */
-
-      // return {
-      //   type: 'bar',
-      //   name: r.name,
-      //   data: this.data.filter((x) => x.seriesId === r.id).map((x) => x.value),
-      //   // data: this.data
-      //   //   .filter((x) => x.seriesId === s.id)
-      //   //   .map((x) => [x.unixTimestamp, x.value]),
-      // };
     });
 
     this.updateFlag = true;
