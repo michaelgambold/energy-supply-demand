@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { io, Socket } from 'socket.io-client';
 
 @Component({
   selector: 'app-root',
@@ -9,25 +8,5 @@ import { io, Socket } from 'socket.io-client';
 export class AppComponent {
   title = 'web';
 
-  private socket: Socket;
-
-  constructor() {
-    this.socket = io('/data');
-
-    this.socket.on('connect', () => {
-      console.log('connected to socket');
-    });
-
-    this.socket.on('error', (error) => {
-      console.warn(error);
-    });
-
-    this.socket.on('new-data', (data) => {
-      console.log(data);
-    });
-
-    // setInterval(() => {
-    //   this.socket.emit('liveData', 'whatts up');
-    // }, 1000);
-  }
+  constructor() {}
 }
