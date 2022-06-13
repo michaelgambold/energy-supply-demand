@@ -1,5 +1,6 @@
 import type { EntityManager } from '@mikro-orm/core';
 import { Seeder } from '@mikro-orm/seeder';
+import { Logger } from '@nestjs/common';
 import { RegionDimension } from '../entities/RegionDimension.entity';
 
 const seedData: Partial<RegionDimension>[] = [
@@ -42,7 +43,11 @@ const seedData: Partial<RegionDimension>[] = [
 ];
 
 export class RegionSeeder extends Seeder {
+  private readonly logger = new Logger(RegionSeeder.name);
+
   async run(em: EntityManager): Promise<void> {
+    this.logger.log('Starting region dimension seed');
+
     for (const item of seedData) {
       const region = await em.findOne(RegionDimension, { ref: item.ref });
 
@@ -51,7 +56,7 @@ export class RegionSeeder extends Seeder {
         region.abbreviation = item.abbreviation;
         region.name = item.name;
         region.timezone = item.timezone;
-        return;
+        continue;
       }
 
       em.create(RegionDimension, {
@@ -61,5 +66,7 @@ export class RegionSeeder extends Seeder {
         timezone: item.timezone,
       });
     }
+
+    this.logger.log('Finished region dimension seed');
   }
 }

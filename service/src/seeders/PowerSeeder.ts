@@ -1,5 +1,6 @@
 import type { EntityManager } from '@mikro-orm/core';
 import { Seeder } from '@mikro-orm/seeder';
+import { Logger } from '@nestjs/common';
 import { PowerDimension } from '../entities/PowerDimension.entity';
 
 const seedData: Partial<PowerDimension>[] = [
@@ -16,7 +17,11 @@ const seedData: Partial<PowerDimension>[] = [
 ];
 
 export class PowerSeeder extends Seeder {
+  private readonly logger = new Logger(PowerSeeder.name);
+
   async run(em: EntityManager): Promise<void> {
+    this.logger.log('Starting power dimension seed');
+
     for (const item of seedData) {
       const power = await em.findOne(PowerDimension, { ref: item.ref });
 
@@ -24,7 +29,7 @@ export class PowerSeeder extends Seeder {
       if (power) {
         power.name = item.name;
         power.type = item.type;
-        return;
+        continue;
       }
 
       em.create(PowerDimension, {
@@ -33,5 +38,7 @@ export class PowerSeeder extends Seeder {
         type: item.type,
       });
     }
+
+    this.logger.log('Finished power dimension seed');
   }
 }
