@@ -298,8 +298,17 @@
           "nullable": false,
           "mappedType": "integer"
         },
-        "quater": {
-          "name": "quater",
+        "quarter": {
+          "name": "quarter",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "week_of_year": {
+          "name": "week_of_year",
           "type": "int",
           "unsigned": false,
           "autoincrement": false,

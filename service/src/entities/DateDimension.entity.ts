@@ -12,7 +12,10 @@ export class DateDimension {
   year: number;
 
   @Property()
-  quater: number;
+  quarter: number;
+
+  @Property()
+  weekOfYear: number;
 
   @Property()
   monthNumber: number;
