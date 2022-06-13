@@ -8,9 +8,9 @@ import {
 } from '@nestjs/common';
 import { subDays, subHours, subWeeks } from 'date-fns';
 import { DataFact } from '../entities/DataFact.entity';
-import { Fuel } from '../entities/Fuel.entity';
-import { Power } from '../entities/Power.entity';
-import { Region } from '../entities/Region.entity';
+import { FuelDimension } from '../entities/FuelDimension.entity';
+import { PowerDimension } from '../entities/PowerDimension.entity';
+import { RegionDimension } from '../entities/RegionDimension.entity';
 import { DataService } from './data.service';
 import { DataDto } from './dto/data.dto';
 

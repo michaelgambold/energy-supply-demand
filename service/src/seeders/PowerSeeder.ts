@@ -1,8 +1,8 @@
 import type { EntityManager } from '@mikro-orm/core';
 import { Seeder } from '@mikro-orm/seeder';
-import { Power } from '../entities/Power.entity';
+import { PowerDimension } from '../entities/PowerDimension.entity';
 
-const seedData: Partial<Power>[] = [
+const seedData: Partial<PowerDimension>[] = [
   {
     name: 'Demand',
     ref: 'DemandInputMetadata',
@@ -18,7 +18,7 @@ const seedData: Partial<Power>[] = [
 export class PowerSeeder extends Seeder {
   async run(em: EntityManager): Promise<void> {
     for (const item of seedData) {
-      const power = await em.findOne(Power, { ref: item.ref });
+      const power = await em.findOne(PowerDimension, { ref: item.ref });
 
       // update existing region if found
       if (power) {
@@ -27,7 +27,7 @@ export class PowerSeeder extends Seeder {
         return;
       }
 
-      em.create(Power, {
+      em.create(PowerDimension, {
         name: item.name,
         ref: item.ref,
         type: item.type,

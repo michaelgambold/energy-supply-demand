@@ -1,11 +1,11 @@
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Module } from '@nestjs/common';
-import { Power } from '../entities/Power.entity';
+import { PowerDimension } from '../entities/PowerDimension.entity';
 import { PowerService } from './power.service';
 import { PowerController } from './power.controller';
 
 @Module({
-  imports: [MikroOrmModule.forFeature([Power])],
+  imports: [MikroOrmModule.forFeature([PowerDimension])],
   providers: [PowerService],
   exports: [PowerService],
   controllers: [PowerController],

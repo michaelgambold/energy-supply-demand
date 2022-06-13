@@ -15,6 +15,97 @@
           "nullable": false,
           "mappedType": "integer"
         },
+        "time": {
+          "name": "time",
+          "type": "time(0)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "time"
+        },
+        "quater_of_day": {
+          "name": "quater_of_day",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "half_of_day": {
+          "name": "half_of_day",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "hour": {
+          "name": "hour",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "quater_of_hour": {
+          "name": "quater_of_hour",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "twelfth_of_hour": {
+          "name": "twelfth_of_hour",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "minute": {
+          "name": "minute",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        }
+      },
+      "name": "time",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "time_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "unsigned": true,
+          "autoincrement": true,
+          "primary": true,
+          "nullable": false,
+          "mappedType": "integer"
+        },
         "name": {
           "name": "name",
           "type": "varchar(255)",
@@ -52,11 +143,11 @@
           "mappedType": "string"
         }
       },
-      "name": "region",
+      "name": "region_dimension",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "region_pkey",
+          "keyName": "region_dimension_pkey",
           "columnNames": [
             "id"
           ],
@@ -107,11 +198,11 @@
           "mappedType": "string"
         }
       },
-      "name": "power",
+      "name": "power_dimension",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "power_pkey",
+          "keyName": "power_dimension_pkey",
           "columnNames": [
             "id"
           ],
@@ -162,11 +253,102 @@
           "mappedType": "string"
         }
       },
-      "name": "fuel",
+      "name": "fuel_dimension",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "fuel_pkey",
+          "keyName": "fuel_dimension_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "unsigned": true,
+          "autoincrement": true,
+          "primary": true,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "date": {
+          "name": "date",
+          "type": "date",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "date"
+        },
+        "year": {
+          "name": "year",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "quater": {
+          "name": "quater",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "month_number": {
+          "name": "month_number",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "day_of_month": {
+          "name": "day_of_month",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "day_of_week": {
+          "name": "day_of_week",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "day_name": {
+          "name": "day_name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        }
+      },
+      "name": "date_dimension",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "date_dimension_pkey",
           "columnNames": [
             "id"
           ],
@@ -296,7 +478,7 @@
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "public.fuel",
+          "referencedTableName": "public.fuel_dimension",
           "updateRule": "cascade"
         },
         "data_fact_region_id_foreign": {
@@ -308,7 +490,7 @@
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "public.region",
+          "referencedTableName": "public.region_dimension",
           "updateRule": "cascade"
         },
         "data_fact_power_id_foreign": {
@@ -320,7 +502,7 @@
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "public.power",
+          "referencedTableName": "public.power_dimension",
           "updateRule": "cascade"
         }
       }

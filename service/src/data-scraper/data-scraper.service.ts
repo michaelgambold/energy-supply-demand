@@ -7,9 +7,9 @@ import { Queue } from 'bull';
 import { CreateDatumDto } from '../data/dto/create-datum.dto';
 import { DataDto } from '../data/dto/data.dto';
 import { DataFact } from '../entities/DataFact.entity';
-import { Fuel } from '../entities/Fuel.entity';
-import { Power } from '../entities/Power.entity';
-import { Region } from '../entities/Region.entity';
+import { FuelDimension } from '../entities/FuelDimension.entity';
+import { PowerDimension } from '../entities/PowerDimension.entity';
+import { RegionDimension } from '../entities/RegionDimension.entity';
 import { RealTimeFuelData } from './dto/real-time-fuel-data.dto';
 
 @Injectable()
@@ -39,9 +39,9 @@ export class DataScraperService {
     };
 
     const dataFactRepository = this.orm.em.getRepository(DataFact);
-    const fuelRepository = this.orm.em.getRepository(Fuel);
-    const regionRepository = this.orm.em.getRepository(Region);
-    const powerRepository = this.orm.em.getRepository(Power);
+    const fuelRepository = this.orm.em.getRepository(FuelDimension);
+    const regionRepository = this.orm.em.getRepository(RegionDimension);
+    const powerRepository = this.orm.em.getRepository(PowerDimension);
 
     this.httpService.get<RealTimeFuelData>(this.url).subscribe(async (data) => {
       try {

@@ -1,7 +1,7 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 
 @Entity()
-export class Power {
+export class RegionDimension {
   @PrimaryKey()
   id!: number;
 
@@ -9,8 +9,11 @@ export class Power {
   name: string;
 
   @Property()
+  abbreviation: string;
+
+  @Property()
   ref: string;
 
   @Property()
-  type: 'generation' | 'demand';
+  timezone: string;
 }

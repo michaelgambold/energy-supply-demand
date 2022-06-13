@@ -1,8 +1,8 @@
 import type { EntityManager } from '@mikro-orm/core';
 import { Seeder } from '@mikro-orm/seeder';
-import { Fuel } from '../entities/Fuel.entity';
+import { FuelDimension } from '../entities/FuelDimension.entity';
 
-const seedData: Partial<Fuel>[] = [
+const seedData: Partial<FuelDimension>[] = [
   {
     name: 'Battery Storage',
     ref: 'Battery Storage',
@@ -68,7 +68,7 @@ const seedData: Partial<Fuel>[] = [
 export class FuelSeeder extends Seeder {
   async run(em: EntityManager): Promise<void> {
     for (const item of seedData) {
-      const fuel = await em.findOne(Fuel, { ref: item.ref });
+      const fuel = await em.findOne(FuelDimension, { ref: item.ref });
 
       // update existing record
       if (fuel) {
@@ -77,7 +77,7 @@ export class FuelSeeder extends Seeder {
         return;
       }
 
-      em.create(Fuel, {
+      em.create(FuelDimension, {
         name: item.name,
         ref: item.ref,
         type: item.type,

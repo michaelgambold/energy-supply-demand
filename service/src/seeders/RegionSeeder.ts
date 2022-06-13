@@ -1,8 +1,8 @@
 import type { EntityManager } from '@mikro-orm/core';
 import { Seeder } from '@mikro-orm/seeder';
-import { Region } from '../entities/Region.entity';
+import { RegionDimension } from '../entities/RegionDimension.entity';
 
-const seedData: Partial<Region>[] = [
+const seedData: Partial<RegionDimension>[] = [
   {
     name: 'New South Wales',
     abbreviation: 'NSW',
@@ -44,7 +44,7 @@ const seedData: Partial<Region>[] = [
 export class RegionSeeder extends Seeder {
   async run(em: EntityManager): Promise<void> {
     for (const item of seedData) {
-      const region = await em.findOne(Region, { ref: item.ref });
+      const region = await em.findOne(RegionDimension, { ref: item.ref });
 
       // update existing region if found
       if (region) {
@@ -54,7 +54,7 @@ export class RegionSeeder extends Seeder {
         return;
       }
 
-      em.create(Region, {
+      em.create(RegionDimension, {
         abbreviation: item.abbreviation,
         name: item.name,
         ref: item.ref,
