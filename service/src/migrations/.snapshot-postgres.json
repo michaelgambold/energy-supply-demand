@@ -79,11 +79,11 @@
           "mappedType": "integer"
         }
       },
-      "name": "time",
+      "name": "time_dimension",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "time_pkey",
+          "keyName": "time_dimension_pkey",
           "columnNames": [
             "id"
           ],
