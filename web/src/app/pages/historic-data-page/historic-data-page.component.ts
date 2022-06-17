@@ -4,7 +4,11 @@ import { Data } from '../../shared/models/data';
 import { Power } from '../../shared/models/power';
 import { Region } from '../../shared/models/region';
 
-import { DataService } from '../../shared/services/data.service';
+import {
+  DataService,
+  HistoricDataPeriod,
+  HistoricDataTimeRange,
+} from '../../shared/services/data.service';
 import { PowerService } from '../../shared/services/power.service';
 import { RegionService } from '../../shared/services/region.service';
 
@@ -65,15 +69,61 @@ export class HistoricDataPageComponent implements OnInit {
   }
 
   refreshData() {
-    console.log('refreshing data');
-    // console.log(`time range: ${this.selectedTimeRange}`);
-    // console.log(`period: ${this.selectedPeriod}`);
-    // console.log(`region: ${this.selectedRegion}`);
+    let period: HistoricDataPeriod;
+    let timeRange: HistoricDataTimeRange;
+
+    switch (this.selectedTimeRange) {
+      case 'Last 3 Hours':
+        timeRange = '3Hours';
+        break;
+      case 'Last 6 Hours':
+        timeRange = '6Hours';
+        break;
+      case 'Last 12 Hours':
+        timeRange = '12Hours';
+        break;
+      case 'Last 24 Hours':
+        timeRange = '24Hours';
+        break;
+      case 'Last 3 Days':
+        timeRange = '3Days';
+        break;
+      case 'Last 1 Week':
+        timeRange = '1Week';
+        break;
+      case 'Last 2 Weeks':
+        timeRange = '2Weeks';
+        break;
+      default:
+        timeRange = '1Hour';
+        break;
+    }
+
+    switch (this.selectedPeriod) {
+      case '5 Minutes':
+        period = '5Minutes';
+        break;
+      case '15 Minutes':
+        period = '15Minutes';
+        break;
+      case '1 Hour':
+        period = '1Hour';
+        break;
+      case '6 Hours':
+        period = '6Hours';
+        break;
+      case '1 Day':
+        period = '1Day';
+        break;
+      default:
+        period = '1Minute';
+        break;
+    }
 
     this.generationData$ = this.dataService
       .getHistoricData({
-        period: '1Minute',
-        timeRange: '1Hour',
+        period,
+        timeRange,
         regionId: this.selectedRegion.id,
         powerId: this.power.find((x) => x.type === 'generation')?.id,
       })
@@ -81,8 +131,8 @@ export class HistoricDataPageComponent implements OnInit {
 
     this.demandData$ = this.dataService
       .getHistoricData({
-        period: '1Minute',
-        timeRange: '1Hour',
+        period,
+        timeRange,
         regionId: this.selectedRegion.id,
         powerId: this.power.find((x) => x.type === 'demand')?.id,
       })

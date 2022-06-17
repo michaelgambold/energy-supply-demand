@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Data } from '../models/data';
 
-type TimeRange =
+export type HistoricDataTimeRange =
   | '1Hour'
   | '3Hours'
   | '6Hours'
@@ -13,7 +13,7 @@ type TimeRange =
   | '1Week'
   | '2Weeks';
 
-type Period =
+export type HistoricDataPeriod =
   | '1Minute'
   | '5Minutes'
   | '15Minutes'
@@ -28,8 +28,8 @@ export class DataService {
   constructor(private readonly http: HttpClient) {}
 
   getHistoricData(args: {
-    timeRange: TimeRange;
-    period: Period;
+    timeRange: HistoricDataTimeRange;
+    period: HistoricDataPeriod;
     fuelId?: number;
     powerId?: number;
     regionId?: number;
