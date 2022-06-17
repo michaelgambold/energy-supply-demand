@@ -32,15 +32,6 @@ export class DataScraperService {
   async scrapeData() {
     this.logger.log('Started scraping data');
 
-    const tempBullDto: DataDto = {
-      data: [],
-      metadata: {
-        fuels: [],
-        power: [],
-        regions: [],
-      },
-    };
-
     const dataFactRepository = this.orm.em.getRepository(DataFact);
     const fuelRepository = this.orm.em.getRepository(FuelDimension);
     const regionRepository = this.orm.em.getRepository(RegionDimension);
@@ -140,12 +131,6 @@ export class DataScraperService {
           });
         }
 
-        // push temp bull data points ###########
-
-        this.newDataQueue.add(tempBullDto);
-
-        // ./ push temp bull data points ###########
-
         if (!dataPoints.length) {
           this.logger.log('No new data points to process');
           this.logger.log('Completed scraping data');
@@ -154,7 +139,7 @@ export class DataScraperService {
 
         const createdDataFacts = dataPoints.reduce(
           (dataFacts: DataFact[], dataPoint) => {
-            dataFactRepository.create(dataPoint);
+            dataFacts.push(dataFactRepository.create(dataPoint));
             return dataFacts;
           },
           [],
