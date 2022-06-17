@@ -9,7 +9,6 @@ import {
   getMonth,
   getQuarter,
   getWeek,
-  getWeekYear,
   getYear,
 } from 'date-fns';
 import { DateDimension } from '../entities/DateDimension.entity';
@@ -62,8 +61,8 @@ export class DateSeeder extends Seeder {
       'Saturday',
       'Sunday',
     ];
-    let date = new Date(Date.UTC(2022, 5, 13));
-    const endDate = new Date(Date.UTC(2022, 6, 1));
+    let date = new Date(Date.UTC(2022, 0, 1));
+    const endDate = new Date(Date.UTC(2050, 0, 1));
 
     while (date < endDate) {
       seedData.push({
@@ -74,7 +73,10 @@ export class DateSeeder extends Seeder {
         monthNumber: getMonth(date) + 1,
         quarter: getQuarter(date),
         year: getYear(date),
-        weekOfYear: getWeek(date),
+        weekOfYear: getWeek(date, {
+          weekStartsOn: 1,
+          firstWeekContainsDate: 4,
+        }),
       });
 
       date = addDays(date, 1);

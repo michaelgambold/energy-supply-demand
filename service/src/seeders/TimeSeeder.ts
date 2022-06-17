@@ -1,21 +1,7 @@
-import type { EntityManager, TimeType } from '@mikro-orm/core';
+import type { EntityManager } from '@mikro-orm/core';
 import { Seeder } from '@mikro-orm/seeder';
 import { Logger } from '@nestjs/common';
-import {
-  addDays,
-  addMinutes,
-  format,
-  getDate,
-  getDay,
-  getHours,
-  getISODay,
-  getMinutes,
-  getMonth,
-  getQuarter,
-  getWeek,
-  getWeekYear,
-  getYear,
-} from 'date-fns';
+import { addMinutes, format, getHours, getMinutes } from 'date-fns';
 import { TimeDimension } from '../entities/TimeDimension.entity';
 
 export class TimeSeeder extends Seeder {
