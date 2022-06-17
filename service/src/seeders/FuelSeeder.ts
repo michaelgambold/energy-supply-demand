@@ -1,8 +1,9 @@
 import type { EntityManager } from '@mikro-orm/core';
 import { Seeder } from '@mikro-orm/seeder';
-import { Fuel } from '../entities/Fuel.entity';
+import { Logger } from '@nestjs/common';
+import { FuelDimension } from '../entities/FuelDimension.entity';
 
-const seedData: Partial<Fuel>[] = [
+const seedData: Partial<FuelDimension>[] = [
   {
     name: 'Battery Storage',
     ref: 'Battery Storage',
@@ -66,22 +67,28 @@ const seedData: Partial<Fuel>[] = [
 ];
 
 export class FuelSeeder extends Seeder {
+  private readonly logger = new Logger(FuelSeeder.name);
+
   async run(em: EntityManager): Promise<void> {
+    this.logger.log('Starting fuel dimension seed');
+
     for (const item of seedData) {
-      const fuel = await em.findOne(Fuel, { ref: item.ref });
+      const fuel = await em.findOne(FuelDimension, { ref: item.ref });
 
       // update existing record
       if (fuel) {
         fuel.name = item.name;
         fuel.type = item.type;
-        return;
+        continue;
       }
 
-      em.create(Fuel, {
+      em.create(FuelDimension, {
         name: item.name,
         ref: item.ref,
         type: item.type,
       });
     }
+
+    this.logger.log('Finished fuel dimension seed');
   }
 }

@@ -4,12 +4,15 @@ import { InjectQueue } from '@nestjs/bull';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Queue } from 'bull';
+import { format } from 'date-fns';
 import { CreateDatumDto } from '../data/dto/create-datum.dto';
 import { DataDto } from '../data/dto/data.dto';
 import { DataFact } from '../entities/DataFact.entity';
-import { Fuel } from '../entities/Fuel.entity';
-import { Power } from '../entities/Power.entity';
-import { Region } from '../entities/Region.entity';
+import { DateDimension } from '../entities/DateDimension.entity';
+import { FuelDimension } from '../entities/FuelDimension.entity';
+import { PowerDimension } from '../entities/PowerDimension.entity';
+import { RegionDimension } from '../entities/RegionDimension.entity';
+import { TimeDimension } from '../entities/TimeDimension.entity';
 import { RealTimeFuelData } from './dto/real-time-fuel-data.dto';
 
 @Injectable()
@@ -39,9 +42,11 @@ export class DataScraperService {
     };
 
     const dataFactRepository = this.orm.em.getRepository(DataFact);
-    const fuelRepository = this.orm.em.getRepository(Fuel);
-    const regionRepository = this.orm.em.getRepository(Region);
-    const powerRepository = this.orm.em.getRepository(Power);
+    const fuelRepository = this.orm.em.getRepository(FuelDimension);
+    const regionRepository = this.orm.em.getRepository(RegionDimension);
+    const powerRepository = this.orm.em.getRepository(PowerDimension);
+    const dateRepository = this.orm.em.getRepository(DateDimension);
+    const timeRepository = this.orm.em.getRepository(TimeDimension);
 
     this.httpService.get<RealTimeFuelData>(this.url).subscribe(async (data) => {
       try {
@@ -82,26 +87,32 @@ export class DataScraperService {
             continue;
           }
 
-          // temp for emitting new data ##################
+          const itemDate = new Date(item.timeStamp);
 
-          if (!tempBullDto.metadata.fuels.includes(fuel)) {
-            tempBullDto.metadata.fuels.push(fuel);
-          }
-          if (!tempBullDto.metadata.power.includes(power)) {
-            tempBullDto.metadata.power.push(power);
-          }
-          if (!tempBullDto.metadata.regions.includes(region)) {
-            tempBullDto.metadata.regions.push(region);
-          }
-          tempBullDto.data.push({
-            fuelId: fuel.id,
-            powerId: power.id,
-            regionId: region.id,
-            timestamp: new Date(item.timeStamp),
-            value: item.value,
+          const dateDimension = await dateRepository.findOne({
+            year: itemDate.getUTCFullYear(),
+            monthNumber: itemDate.getUTCMonth() + 1,
+            dayOfMonth: itemDate.getUTCDate(),
           });
 
-          // ./temp for emitting new data##############
+          if (!dateDimension) {
+            this.logger.warn(
+              `Date (${item.timeStamp}) not found...skipping record`,
+            );
+            continue;
+          }
+
+          const timeDimension = await timeRepository.findOne({
+            hour: itemDate.getUTCHours(),
+            minute: itemDate.getUTCMinutes(),
+          });
+
+          if (!timeDimension) {
+            this.logger.warn(
+              `Time (${item.timeStamp}) not found...skipping record`,
+            );
+            continue;
+          }
 
           // get previous data point from the database for this series
           // this is NOT a scaleable solution for this as query is done for EVERY data point
@@ -124,6 +135,8 @@ export class DataScraperService {
             region,
             timestamp: new Date(item.timeStamp),
             value: item.value,
+            date: dateDimension,
+            time: timeDimension,
           });
         }
 

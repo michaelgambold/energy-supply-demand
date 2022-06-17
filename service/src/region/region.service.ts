@@ -1,15 +1,15 @@
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
 import { Injectable, Logger } from '@nestjs/common';
-import { Region } from '../entities/Region.entity';
+import { RegionDimension } from '../entities/RegionDimension.entity';
 
 @Injectable()
 export class RegionService {
-  private readonly logger = new Logger(Region.name);
+  private readonly logger = new Logger(RegionDimension.name);
 
   constructor(
-    @InjectRepository(Region)
-    private regionRepository: EntityRepository<Region>,
+    @InjectRepository(RegionDimension)
+    private regionRepository: EntityRepository<RegionDimension>,
   ) {}
 
   findAll() {

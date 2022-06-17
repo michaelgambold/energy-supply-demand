@@ -1,15 +1,15 @@
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
 import { Injectable, Logger } from '@nestjs/common';
-import { Power } from '../entities/Power.entity';
+import { PowerDimension } from '../entities/PowerDimension.entity';
 
 @Injectable()
 export class PowerService {
   private readonly logger = new Logger(PowerService.name);
 
   constructor(
-    @InjectRepository(Power)
-    private powerRepository: EntityRepository<Power>,
+    @InjectRepository(PowerDimension)
+    private powerRepository: EntityRepository<PowerDimension>,
   ) {}
 
   findAll() {
