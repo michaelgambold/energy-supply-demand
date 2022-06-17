@@ -7,9 +7,11 @@ import {
   Property,
 } from '@mikro-orm/core';
 import { v4 } from 'uuid';
+import { DateDimension } from './DateDimension.entity';
 import { FuelDimension } from './FuelDimension.entity';
 import { PowerDimension } from './PowerDimension.entity';
 import { RegionDimension } from './RegionDimension.entity';
+import { TimeDimension } from './TimeDimension.entity';
 
 @Entity()
 export class DataFact {
@@ -34,4 +36,12 @@ export class DataFact {
   @Index({ name: 'power_index' })
   @ManyToOne()
   power!: PowerDimension;
+
+  @Index({ name: 'date_index' })
+  @ManyToOne()
+  date!: DateDimension;
+
+  @Index({ name: 'time_index' })
+  @ManyToOne()
+  time!: TimeDimension;
 }

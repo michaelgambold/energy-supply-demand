@@ -425,6 +425,24 @@
           "primary": false,
           "nullable": false,
           "mappedType": "integer"
+        },
+        "date_id": {
+          "name": "date_id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "time_id": {
+          "name": "time_id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
         }
       },
       "name": "data_fact",
@@ -463,6 +481,24 @@
           ],
           "composite": false,
           "keyName": "power_index",
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "date_id"
+          ],
+          "composite": false,
+          "keyName": "date_index",
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "time_id"
+          ],
+          "composite": false,
+          "keyName": "time_index",
           "primary": false,
           "unique": false
         },
@@ -512,6 +548,30 @@
             "id"
           ],
           "referencedTableName": "public.power_dimension",
+          "updateRule": "cascade"
+        },
+        "data_fact_date_id_foreign": {
+          "constraintName": "data_fact_date_id_foreign",
+          "columnNames": [
+            "date_id"
+          ],
+          "localTableName": "public.data_fact",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.date_dimension",
+          "updateRule": "cascade"
+        },
+        "data_fact_time_id_foreign": {
+          "constraintName": "data_fact_time_id_foreign",
+          "columnNames": [
+            "time_id"
+          ],
+          "localTableName": "public.data_fact",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.time_dimension",
           "updateRule": "cascade"
         }
       }
