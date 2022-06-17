@@ -10,8 +10,15 @@ export class TimeSeeder extends Seeder {
   async run(em: EntityManager): Promise<void> {
     this.logger.log('Starting time dimension seed');
 
+    const timeDimensions = await em.find(TimeDimension, {});
+    const timeDimensionMap = new Map(
+      timeDimensions.map((x) => {
+        return [x.time, x];
+      }),
+    );
+
     for (const item of this.createSeedData()) {
-      const time = await em.findOne(TimeDimension, { time: item.time });
+      const time = timeDimensionMap.get(item.time);
 
       // update existing region if found
       if (time) {

@@ -19,10 +19,19 @@ export class DateSeeder extends Seeder {
   async run(em: EntityManager): Promise<void> {
     this.logger.log('Starting date dimension seed');
 
-    for (const item of this.createSeedData()) {
-      const date = await em.findOne(DateDimension, { date: item.date });
+    const dateDimensions = await em.find(DateDimension, {});
+    const dateDimensionMap = new Map(
+      dateDimensions.map((x) => {
+        return [`${x.year}-${x.monthNumber}-${x.dayOfMonth}`, x];
+      }),
+    );
 
-      // update existing region if found
+    for (const item of this.createSeedData()) {
+      const date = dateDimensionMap.get(
+        `${item.year}-${item.monthNumber}-${item.dayOfMonth}`,
+      );
+
+      //   // update existing region if found
       if (date) {
         date.dayName = item.dayName;
         date.dayOfMonth = item.dayOfMonth;
