@@ -16,6 +16,7 @@ import { RegionModule } from './region/region.module';
 import { PowerModule } from './power/power.module';
 import { PowerSeeder } from './seeders/PowerSeeder';
 import { DateSeeder } from './seeders/DateSeeder';
+import { TimeSeeder } from './seeders/TimeSeeder';
 
 @Module({
   imports: [
@@ -53,6 +54,6 @@ export class AppModule {
     await this.orm.getMigrator().up();
     await this.orm
       .getSeeder()
-      .seed(FuelSeeder, RegionSeeder, PowerSeeder, DateSeeder);
+      .seed(FuelSeeder, RegionSeeder, PowerSeeder, DateSeeder, TimeSeeder);
   }
 }

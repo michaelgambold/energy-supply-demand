@@ -9,7 +9,7 @@ export class TimeDimension {
   time: string;
 
   @Property()
-  quaterOfDay: number;
+  quarterOfDay: number;
 
   @Property()
   halfOfDay: number;
@@ -18,7 +18,7 @@ export class TimeDimension {
   hour: number;
 
   @Property()
-  quaterOfHour: number;
+  quarterOfHour: number;
 
   @Property()
   twelfthOfHour: number;

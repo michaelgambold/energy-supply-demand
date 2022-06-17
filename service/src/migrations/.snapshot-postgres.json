@@ -24,8 +24,8 @@
           "nullable": false,
           "mappedType": "time"
         },
-        "quater_of_day": {
-          "name": "quater_of_day",
+        "quarter_of_day": {
+          "name": "quarter_of_day",
           "type": "int",
           "unsigned": false,
           "autoincrement": false,
@@ -51,8 +51,8 @@
           "nullable": false,
           "mappedType": "integer"
         },
-        "quater_of_hour": {
-          "name": "quater_of_hour",
+        "quarter_of_hour": {
+          "name": "quarter_of_hour",
           "type": "int",
           "unsigned": false,
           "autoincrement": false,
