@@ -118,6 +118,18 @@ export class DataService {
         { time: { twelfthOfHour: QueryOrder.ASC } },
       ]);
 
+    if (args.fuelId) {
+      qb.andWhere({ fuel: args.fuelId });
+    }
+
+    if (args.powerId) {
+      qb.andWhere({ power: args.powerId });
+    }
+
+    if (args.regionId) {
+      qb.andWhere({ region: args.regionId });
+    }
+
     return qb.execute();
   }
 
@@ -178,6 +190,18 @@ export class DataService {
         { time: { quarterOfHour: QueryOrder.ASC } },
       ]);
 
+    if (args.fuelId) {
+      qb.andWhere({ fuel: args.fuelId });
+    }
+
+    if (args.powerId) {
+      qb.andWhere({ power: args.powerId });
+    }
+
+    if (args.regionId) {
+      qb.andWhere({ region: args.regionId });
+    }
+
     return qb.execute();
   }
 
@@ -233,6 +257,18 @@ export class DataService {
         { date: { dayOfMonth: QueryOrder.ASC } },
         { time: { hour: QueryOrder.ASC } },
       ]);
+
+    if (args.fuelId) {
+      qb.andWhere({ fuel: args.fuelId });
+    }
+
+    if (args.powerId) {
+      qb.andWhere({ power: args.powerId });
+    }
+
+    if (args.regionId) {
+      qb.andWhere({ region: args.regionId });
+    }
 
     return qb.execute();
   }
@@ -290,6 +326,18 @@ export class DataService {
         { time: { quarterOfDay: QueryOrder.ASC } },
       ]);
 
+    if (args.fuelId) {
+      qb.andWhere({ fuel: args.fuelId });
+    }
+
+    if (args.powerId) {
+      qb.andWhere({ power: args.powerId });
+    }
+
+    if (args.regionId) {
+      qb.andWhere({ region: args.regionId });
+    }
+
     return qb.execute();
   }
 
@@ -340,6 +388,18 @@ export class DataService {
         { date: { monthNumber: QueryOrder.ASC } },
         { date: { dayOfMonth: QueryOrder.ASC } },
       ]);
+
+    if (args.fuelId) {
+      qb.andWhere({ fuel: args.fuelId });
+    }
+
+    if (args.powerId) {
+      qb.andWhere({ power: args.powerId });
+    }
+
+    if (args.regionId) {
+      qb.andWhere({ region: args.regionId });
+    }
 
     return qb.execute();
   }
