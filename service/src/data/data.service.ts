@@ -13,11 +13,6 @@ export class DataService {
     private dataFactRepository: EntityRepository<DataFact>,
   ) {}
 
-  /**
-   * Find data range with 1 minute data period
-   * @param args
-   * @returns
-   */
   async findDataRange1MinutePeriod(args: {
     startDate: Date;
     endDate: Date;
@@ -99,7 +94,6 @@ export class DataService {
       ])
       .join('df.date', 'dd')
       .join('df.time', 'td')
-      // todo: add where clause
       .groupBy([
         'dd.year',
         'dd.month_number',
@@ -171,7 +165,6 @@ export class DataService {
       ])
       .join('df.date', 'dd')
       .join('df.time', 'td')
-      // todo: add where clause
       .groupBy([
         'dd.year',
         'dd.month_number',
@@ -241,7 +234,6 @@ export class DataService {
       ])
       .join('df.date', 'dd')
       .join('df.time', 'td')
-      // todo: add where clause
       .groupBy([
         'dd.year',
         'dd.month_number',
@@ -309,7 +301,6 @@ export class DataService {
       ])
       .join('df.date', 'dd')
       .join('df.time', 'td')
-      // todo: add where clause
       .groupBy([
         'dd.year',
         'dd.month_number',
@@ -374,7 +365,6 @@ export class DataService {
         'avg(value) as value',
       ])
       .join('df.date', 'dd')
-      // todo: add where clause
       .groupBy([
         'dd.year',
         'dd.month_number',

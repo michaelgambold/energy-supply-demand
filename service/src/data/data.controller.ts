@@ -7,10 +7,6 @@ import {
   Query,
 } from '@nestjs/common';
 import { subDays, subHours, subWeeks } from 'date-fns';
-import { DataFact } from '../entities/DataFact.entity';
-import { FuelDimension } from '../entities/FuelDimension.entity';
-import { PowerDimension } from '../entities/PowerDimension.entity';
-import { RegionDimension } from '../entities/RegionDimension.entity';
 import { FuelService } from '../fuel/fuel.service';
 import { PowerService } from '../power/power.service';
 import { RegionService } from '../region/region.service';
@@ -223,56 +219,5 @@ export class DataController {
       default:
         throw new BadRequestException('Invalid period');
     }
-
-    // TODO: re-aggregate the data for different periods
-
-    // const dataDto: DataDto = data.reduce(
-    //   (dto: DataDto, df: DataFact) => {
-    //     // add meta data if it does not exist already
-    //     if (!dto.metadata.fuels.includes(df.fuel)) {
-    //       dto.metadata.fuels.push(df.fuel);
-    //     }
-
-    //     if (!dto.metadata.power.includes(df.power)) {
-    //       dto.metadata.power.push(df.power);
-    //     }
-
-    //     if (!dto.metadata.regions.includes(df.region)) {
-    //       dto.metadata.regions.push(df.region);
-    //     }
-
-    //     // add data point
-    //     dto.data.push({
-    //       fuelId: df.fuel.id,
-    //       powerId: df.power.id,
-    //       regionId: df.region.id,
-    //       timestamp: df.timestamp,
-    //       value: df.value,
-    //     });
-
-    //     return dto;
-    //   },
-    //   {
-    //     metadata: {
-    //       fuels: [],
-    //       regions: [],
-    //       power: [],
-    //     },
-    //     data: [],
-    //   },
-    // );
-
-    // return dataDto;
-
-    // return {
-    //   metadata: {
-    //     fuels: [], //Array.from(fuels).sort((a, b) => a.name.localeCompare(b.name)),
-    //     regions: [], // Array.from(regions).sort((a, b) =>
-    //     //   a.name.localeCompare(b.name),
-    //     // ),
-    //     power: [], //Array.from(power).sort((a, b) => a.name.localeCompare(b.name)),
-    //   },
-    //   data: dataPoints,
-    // };
   }
 }
