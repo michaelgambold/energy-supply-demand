@@ -78,10 +78,10 @@ export class DataService {
       regionId: number;
       powerId: number;
       timestamp: Date;
-      value: number;
+      value: string;
     }[]
   > {
-    this.logger.log('Find data range with 1 minute period');
+    this.logger.log('Find data range with 5 minute period');
 
     const qb = this.dataFactRepository
       .qb('df')
@@ -99,6 +99,7 @@ export class DataService {
       ])
       .join('df.date', 'dd')
       .join('df.time', 'td')
+      // todo: add where clause
       .groupBy([
         'dd.year',
         'dd.month_number',
@@ -115,6 +116,229 @@ export class DataService {
         { date: { dayOfMonth: QueryOrder.ASC } },
         { time: { hour: QueryOrder.ASC } },
         { time: { twelfthOfHour: QueryOrder.ASC } },
+      ]);
+
+    return qb.execute();
+  }
+
+  async findDataRange15MinutePeriod(args: {
+    startDate: Date;
+    endDate: Date;
+    fuelId?: number;
+    powerId?: number;
+    regionId?: number;
+  }): Promise<
+    {
+      year: number;
+      monthNumber: number;
+      dayOfMonth: number;
+      hour: number;
+      quarterOfHour: number;
+      fuelId: number;
+      regionId: number;
+      powerId: number;
+      timestamp: Date;
+      value: string;
+    }[]
+  > {
+    this.logger.log('Find data range with 15 minute period');
+
+    const qb = this.dataFactRepository
+      .qb('df')
+      .select([
+        'dd.year as year',
+        'dd.month_number as monthNumber',
+        'dd.day_of_month as dayOfMonth',
+        'td.hour as hour',
+        'td.quarter_of_hour as quarterOfHour',
+        'df.fuel_id as fuelId',
+        'df.region_id as regionId',
+        'df.power_id as powerId',
+        'min(timestamp) as timestamp',
+        'avg(value) as value',
+      ])
+      .join('df.date', 'dd')
+      .join('df.time', 'td')
+      // todo: add where clause
+      .groupBy([
+        'dd.year',
+        'dd.month_number',
+        'dd.day_of_month',
+        'td.hour',
+        'td.quarter_of_hour',
+        'df.fuel_id',
+        'df.region_id',
+        'df.power_id',
+      ])
+      .orderBy([
+        { date: { year: QueryOrder.ASC } },
+        { date: { monthNumber: QueryOrder.ASC } },
+        { date: { dayOfMonth: QueryOrder.ASC } },
+        { time: { hour: QueryOrder.ASC } },
+        { time: { quarterOfHour: QueryOrder.ASC } },
+      ]);
+
+    return qb.execute();
+  }
+
+  async findDataRange1HourPeriod(args: {
+    startDate: Date;
+    endDate: Date;
+    fuelId?: number;
+    powerId?: number;
+    regionId?: number;
+  }): Promise<
+    {
+      year: number;
+      monthNumber: number;
+      dayOfMonth: number;
+      hour: number;
+      fuelId: number;
+      regionId: number;
+      powerId: number;
+      timestamp: Date;
+      value: string;
+    }[]
+  > {
+    this.logger.log('Find data range with 1 hour period');
+
+    const qb = this.dataFactRepository
+      .qb('df')
+      .select([
+        'dd.year as year',
+        'dd.month_number as monthNumber',
+        'dd.day_of_month as dayOfMonth',
+        'td.hour as hour',
+        'df.fuel_id as fuelId',
+        'df.region_id as regionId',
+        'df.power_id as powerId',
+        'min(timestamp) as timestamp',
+        'avg(value) as value',
+      ])
+      .join('df.date', 'dd')
+      .join('df.time', 'td')
+      // todo: add where clause
+      .groupBy([
+        'dd.year',
+        'dd.month_number',
+        'dd.day_of_month',
+        'td.hour',
+        'df.fuel_id',
+        'df.region_id',
+        'df.power_id',
+      ])
+      .orderBy([
+        { date: { year: QueryOrder.ASC } },
+        { date: { monthNumber: QueryOrder.ASC } },
+        { date: { dayOfMonth: QueryOrder.ASC } },
+        { time: { hour: QueryOrder.ASC } },
+      ]);
+
+    return qb.execute();
+  }
+
+  async findDataRange6HourPeriod(args: {
+    startDate: Date;
+    endDate: Date;
+    fuelId?: number;
+    powerId?: number;
+    regionId?: number;
+  }): Promise<
+    {
+      year: number;
+      monthNumber: number;
+      dayOfMonth: number;
+      quaterOfHour: number;
+      fuelId: number;
+      regionId: number;
+      powerId: number;
+      timestamp: Date;
+      value: string;
+    }[]
+  > {
+    this.logger.log('Find data range with 6 hour period');
+
+    const qb = this.dataFactRepository
+      .qb('df')
+      .select([
+        'dd.year as year',
+        'dd.month_number as monthNumber',
+        'dd.day_of_month as dayOfMonth',
+        'td.quarter_of_day as quarterOfDay',
+        'df.fuel_id as fuelId',
+        'df.region_id as regionId',
+        'df.power_id as powerId',
+        'min(timestamp) as timestamp',
+        'avg(value) as value',
+      ])
+      .join('df.date', 'dd')
+      .join('df.time', 'td')
+      // todo: add where clause
+      .groupBy([
+        'dd.year',
+        'dd.month_number',
+        'dd.day_of_month',
+        'td.quarter_of_day',
+        'df.fuel_id',
+        'df.region_id',
+        'df.power_id',
+      ])
+      .orderBy([
+        { date: { year: QueryOrder.ASC } },
+        { date: { monthNumber: QueryOrder.ASC } },
+        { date: { dayOfMonth: QueryOrder.ASC } },
+        { time: { quarterOfDay: QueryOrder.ASC } },
+      ]);
+
+    return qb.execute();
+  }
+
+  async findDataRange1DayPeriod(args: {
+    startDate: Date;
+    endDate: Date;
+    fuelId?: number;
+    powerId?: number;
+    regionId?: number;
+  }): Promise<
+    {
+      year: number;
+      monthNumber: number;
+      dayOfMonth: number;
+      fuelId: number;
+      regionId: number;
+      powerId: number;
+      timestamp: Date;
+      value: string;
+    }[]
+  > {
+    this.logger.log('Find data range with 1 day period');
+
+    const qb = this.dataFactRepository
+      .qb('df')
+      .select([
+        'dd.year as year',
+        'dd.month_number as monthNumber',
+        'dd.day_of_month as dayOfMonth',
+        'df.fuel_id as fuelId',
+        'df.region_id as regionId',
+        'df.power_id as powerId',
+        'min(timestamp) as timestamp',
+        'avg(value) as value',
+      ])
+      .join('df.date', 'dd')
+      // todo: add where clause
+      .groupBy([
+        'dd.year',
+        'dd.month_number',
+        'dd.day_of_month',
+        'df.fuel_id',
+        'df.region_id',
+        'df.power_id',
+      ])
+      .orderBy([
+        { date: { year: QueryOrder.ASC } },
+        { date: { monthNumber: QueryOrder.ASC } },
+        { date: { dayOfMonth: QueryOrder.ASC } },
       ]);
 
     return qb.execute();

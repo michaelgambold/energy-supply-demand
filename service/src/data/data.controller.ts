@@ -105,14 +105,14 @@ export class DataController {
         regionId: number;
         powerId: number;
         timestamp: Date;
-        value: number;
+        value: number | string;
       }[],
     ): DataDto => {
       const dataDto: DataDto = input.reduce(
         (dto: DataDto, input) => {
           const f = fuels.find((x) => x.id === input.fuelId);
           const r = regions.find((x) => x.id === input.regionId);
-          const p = powers.find((x) => x.id === powerId);
+          const p = powers.find((x) => x.id === input.powerId);
 
           // add meta data if it does not exist already
           if (!dto.metadata.fuels.includes(f)) {
@@ -133,7 +133,10 @@ export class DataController {
             powerId: input.powerId,
             regionId: input.regionId,
             timestamp: input.timestamp,
-            value: input.value,
+            value:
+              typeof input.value === 'string'
+                ? parseFloat(input.value)
+                : input.value,
           });
 
           return dto;
@@ -180,6 +183,43 @@ export class DataController {
           powerId,
         });
         return mapToDto(fiveMinData);
+      case '15Minutes':
+        const fifteenMinData =
+          await this.dataService.findDataRange15MinutePeriod({
+            startDate,
+            endDate,
+            regionId,
+            fuelId,
+            powerId,
+          });
+        return mapToDto(fifteenMinData);
+      case '1Hour':
+        const oneHourData = await this.dataService.findDataRange1HourPeriod({
+          startDate,
+          endDate,
+          regionId,
+          fuelId,
+          powerId,
+        });
+        return mapToDto(oneHourData);
+      case '6Hours':
+        const sixHourData = await this.dataService.findDataRange6HourPeriod({
+          startDate,
+          endDate,
+          regionId,
+          fuelId,
+          powerId,
+        });
+        return mapToDto(sixHourData);
+      case '1Day':
+        const oneDayData = await this.dataService.findDataRange1DayPeriod({
+          startDate,
+          endDate,
+          regionId,
+          fuelId,
+          powerId,
+        });
+        return mapToDto(oneDayData);
       default:
         throw new BadRequestException('Invalid period');
     }
