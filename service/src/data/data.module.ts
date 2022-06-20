@@ -6,9 +6,15 @@ import { DataFact } from '../entities/DataFact.entity';
 import { DataGateway } from './data.gateway';
 import { FuelModule } from '../fuel/fuel.module';
 import { RegionModule } from '../region/region.module';
+import { PowerModule } from '../power/power.module';
 
 @Module({
-  imports: [MikroOrmModule.forFeature([DataFact]), FuelModule, RegionModule],
+  imports: [
+    MikroOrmModule.forFeature([DataFact]),
+    FuelModule,
+    RegionModule,
+    PowerModule,
+  ],
   controllers: [DataController],
   providers: [DataService, DataGateway],
 })
