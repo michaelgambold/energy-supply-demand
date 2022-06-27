@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, shareReplay, zip } from 'rxjs';
+import { LineSeries } from '../../shared/components/line-chart/line-chart.component';
 import { Data } from '../../shared/models/data';
 import { Power } from '../../shared/models/power';
 import { Region } from '../../shared/models/region';
@@ -46,6 +47,21 @@ export class HistoricDataPageComponent implements OnInit {
 
   power: Power[] = [];
   regions: Region[] = [];
+
+  greenFossilLineSeries: LineSeries[] = [
+    {
+      id: 'green',
+      name: 'Green',
+    },
+    {
+      id: 'fossil',
+      name: 'Fossil',
+    },
+    {
+      id: 'unknown',
+      name: 'Unknown',
+    },
+  ];
 
   constructor(
     private readonly dataService: DataService,
