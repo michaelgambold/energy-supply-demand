@@ -48,19 +48,30 @@
   <div class="pt-4">
     <h2>{{ selectedRegion?.name }}</h2>
     <!-- fuel filters -->
-    <app-line-chart
-      *ngIf="generationData$ | async as data; else spinner"
-      [title]="'Generation'"
-      [series]="data.metadata.fuels | fuelsToLineSeries"
-      [data]="data.data | dataToLineDataPoints: 'fuel'"
-    ></app-line-chart>
-
-    <app-line-chart
-      *ngIf="demandData$ | async as data; else spinner"
-      [title]="'Demand'"
-      [series]="data.metadata.fuels | fuelsToLineSeries"
-      [data]="data.data | dataToLineDataPoints: 'fuel'"
-    ></app-line-chart>
+    <div class="mb-4">
+      <app-line-chart
+        *ngIf="generationData$ | async as data; else spinner"
+        [title]="'Generation'"
+        [series]="data.metadata.fuels | fuelsToLineSeries"
+        [data]="data.data | dataToLineDataPoints: 'fuel'"
+      ></app-line-chart>
+    </div>
+    <div class="mb-4">
+      <app-line-chart
+        *ngIf="generationData$ | async as data; else spinner"
+        [title]="'Generation (Green vs Fossil)'"
+        [series]="greenFossilLineSeries"
+        [data]="data | dataToGreenFossilLineDataPoints"
+      ></app-line-chart>
+    </div>
+    <div class="mb-4">
+      <app-line-chart
+        *ngIf="demandData$ | async as data; else spinner"
+        [title]="'Demand'"
+        [series]="data.metadata.fuels | fuelsToLineSeries"
+        [data]="data.data | dataToLineDataPoints: 'fuel'"
+      ></app-line-chart>
+    </div>
   </div>
 </ng-template>
 
