@@ -17,57 +17,35 @@ export class DataToGreenFossilLineDataPointsPipe implements PipeTransform {
       .filter((x) => x.type === 'unknown')
       .map((x) => x.id);
 
-    const dataPoints: LineDataPoint[] = [];
+    const dataPointMap = new Map<string, LineDataPoint>();
 
     for (const dp of value.data) {
-      let ldp: LineDataPoint | undefined;
-
       if (greenFuelIds.includes(dp.fuelId)) {
-        ldp = this.createOrFindLineDataPoint(dataPoints, dp.timestamp, 'green');
+        this.addValueToMap(dataPointMap, dp.timestamp, 'green', dp.value);
       } else if (fossilFuelIds.includes(dp.fuelId)) {
-        ldp = this.createOrFindLineDataPoint(
-          dataPoints,
-          dp.timestamp,
-          'fossil'
-        );
+        this.addValueToMap(dataPointMap, dp.timestamp, 'fossil', dp.value);
       } else if (unknownFuelIds.includes(dp.fuelId)) {
-        ldp = this.createOrFindLineDataPoint(
-          dataPoints,
-          dp.timestamp,
-          'unknown'
-        );
+        this.addValueToMap(dataPointMap, dp.timestamp, 'unknown', dp.value);
       } else {
         continue;
       }
-
-      ldp.value += dp.value;
     }
 
-    return dataPoints;
+    return Array.from(dataPointMap.values());
   }
 
-  createOrFindLineDataPoint(
-    dataPoints: LineDataPoint[],
+  addValueToMap(
+    dataPointMap: Map<string, LineDataPoint>,
     timestamp: string,
-    type: 'green' | 'fossil' | 'unknown'
+    type: 'green' | 'fossil' | 'unknown',
+    value: number
   ) {
-    let dp = dataPoints.find(
-      (x) =>
-        x.unixTimestamp === new Date(timestamp).valueOf() && x.seriesId === type
-    );
-
-    if (dp) {
-      return dp;
-    }
-
-    dp = {
+    const key = `${timestamp}-${type}`;
+    const lineDataPoint = dataPointMap.get(key);
+    dataPointMap.set(key, {
       seriesId: type,
       unixTimestamp: new Date(timestamp).valueOf(),
-      value: 0,
-    };
-
-    dataPoints.push(dp);
-
-    return dp;
+      value: lineDataPoint ? lineDataPoint.value + value : value,
+    });
   }
 }
