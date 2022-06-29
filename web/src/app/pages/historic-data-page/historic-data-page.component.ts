@@ -1,5 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { Observable, shareReplay, zip } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import {
+  combineLatest,
+  Observable,
+  shareReplay,
+  Subscription,
+  zip,
+} from 'rxjs';
 import { LineSeries } from '../../shared/components/line-chart/line-chart.component';
 import { Data } from '../../shared/models/data';
 import { Power } from '../../shared/models/power';
@@ -18,13 +25,11 @@ import { RegionService } from '../../shared/services/region.service';
   templateUrl: './historic-data-page.component.html',
   styleUrls: ['./historic-data-page.component.css'],
 })
-export class HistoricDataPageComponent implements OnInit {
+export class HistoricDataPageComponent implements OnInit, OnDestroy {
   demandData$!: Observable<Data>;
   generationData$!: Observable<Data>;
 
-  selectedTimeRange = 'Last Hour';
-  selectedPeriod = '1 Minute';
-  selectedRegion!: Region;
+  selectedRegion?: Region;
 
   timeRanges = [
     'Last Hour',
@@ -63,24 +68,42 @@ export class HistoricDataPageComponent implements OnInit {
     },
   ];
 
+  selectedTimeRange = 'Last Hour';
+  selectedPeriod = '1 Minute';
+  selectedRegionIndex = 0;
+
+  private sub!: Subscription;
+
   constructor(
     private readonly dataService: DataService,
     private readonly regionService: RegionService,
-    private readonly powerService: PowerService
+    private readonly powerService: PowerService,
+    private readonly router: Router,
+    private readonly route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    zip([this.powerService.getAll(), this.regionService.getAll()]).subscribe(
-      (res) => {
-        this.power = res[0];
-        this.regions = res[1];
-      }
-    );
+    this.sub = combineLatest([
+      this.powerService.getAll(),
+      this.regionService.getAll(),
+      this.route.queryParamMap,
+    ]).subscribe((res) => {
+      this.power = res[0];
+      this.regions = res[1];
+
+      console.log(res[2]);
+
+      this.selectedRegion = this.regions[this.selectedRegionIndex];
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
   }
 
   onRegionTabChange(index: number): void {
     console.log('region tab changed');
-    this.selectedRegion = this.regions[index];
+    this.selectedRegionIndex = index;
     this.refreshData();
   }
 
@@ -140,7 +163,7 @@ export class HistoricDataPageComponent implements OnInit {
       .getHistoricData({
         period,
         timeRange,
-        regionId: this.selectedRegion.id,
+        regionId: this.regions[this.selectedRegionIndex].id,
         powerId: this.power.find((x) => x.type === 'generation')?.id,
       })
       .pipe(shareReplay()); // hack to stop multiple requests
@@ -149,7 +172,7 @@ export class HistoricDataPageComponent implements OnInit {
       .getHistoricData({
         period,
         timeRange,
-        regionId: this.selectedRegion.id,
+        regionId: this.regions[this.selectedRegionIndex].id,
         powerId: this.power.find((x) => x.type === 'demand')?.id,
       })
       .pipe(shareReplay()); // hack to stop multiple requests
