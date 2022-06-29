@@ -7,22 +7,25 @@
       <mat-form-field>
         <mat-label>Time Range</mat-label>
         <mat-select
-          [(value)]="selectedTimeRange"
-          (selectionChange)="refreshData()"
+          [value]="selectedTimeRange"
+          (selectionChange)="onTimeRangeChange($event.value)"
         >
           <mat-option
             *ngFor="let timeRange of timeRanges"
-            [value]="timeRange"
-            >{{ timeRange }}</mat-option
+            [value]="timeRange.value"
+            >{{ timeRange.label }}</mat-option
           >
         </mat-select>
       </mat-form-field>
 
       <mat-form-field>
         <mat-label>Period</mat-label>
-        <mat-select [(value)]="selectedPeriod" (valueChange)="refreshData()">
-          <mat-option *ngFor="let period of periods" [value]="period">{{
-            period
+        <mat-select
+          [value]="selectedPeriod"
+          (valueChange)="onPeriodChange($event)"
+        >
+          <mat-option *ngFor="let period of periods" [value]="period.value">{{
+            period.label
           }}</mat-option>
         </mat-select>
       </mat-form-field>
@@ -33,7 +36,10 @@
 
   <!-- region tab bar -->
   <div class="pb-8" *ngIf="regions; else spinner">
-    <mat-tab-group (selectedIndexChange)="onRegionTabChange($event)">
+    <mat-tab-group
+      [selectedIndex]="selectedRegionIndex"
+      (selectedIndexChange)="onRegionTabChange($event)"
+    >
       <mat-tab *ngFor="let region of regions" [label]="region.name"
         ><ng-container [ngTemplateOutlet]="regionData"></ng-container
       ></mat-tab>
