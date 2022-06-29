@@ -1,4 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  ComponentFactoryResolver,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   combineLatest,
@@ -68,10 +73,10 @@ export class HistoricDataPageComponent implements OnInit, OnDestroy {
     },
   ];
 
-  selectedTimeRange = 'Last Hour';
-  selectedPeriod = '1 Minute';
-  selectedRegionIndex = 0;
+  selectedTimeRange = '';
+  selectedPeriod = '';
 
+  private selectedRegionIndex = 0;
   private sub!: Subscription;
 
   constructor(
@@ -87,13 +92,21 @@ export class HistoricDataPageComponent implements OnInit, OnDestroy {
       this.powerService.getAll(),
       this.regionService.getAll(),
       this.route.queryParamMap,
-    ]).subscribe((res) => {
-      this.power = res[0];
-      this.regions = res[1];
+    ]).subscribe(([power, regions, paramMap]) => {
+      this.power = power;
+      this.regions = regions;
 
-      console.log(res[2]);
+      this.selectedRegionIndex = Number(paramMap.get('region') || 0);
+      this.selectedPeriod = paramMap.get('period') || '1 Minute';
+      this.selectedTimeRange = paramMap.get('timerange') || 'Last Hour';
+
+      console.log('selectedRegion: ' + this.selectedRegionIndex);
+      console.log('selectedPeriod: ' + this.selectedPeriod);
+      console.log('selectedTimeRange: ' + this.selectedTimeRange);
 
       this.selectedRegion = this.regions[this.selectedRegionIndex];
+
+      this.refreshData();
     });
   }
 
@@ -102,12 +115,40 @@ export class HistoricDataPageComponent implements OnInit, OnDestroy {
   }
 
   onRegionTabChange(index: number): void {
-    console.log('region tab changed');
-    this.selectedRegionIndex = index;
-    this.refreshData();
+    this.router.navigate(['./'], {
+      relativeTo: this.route,
+      queryParams: {
+        region: index,
+        period: this.selectedPeriod,
+        timerange: this.selectedTimeRange,
+      },
+    });
   }
 
-  refreshData() {
+  onTimeRangeChange(value: string): void {
+    console.log(value);
+    this.router.navigate(['./'], {
+      relativeTo: this.route,
+      queryParams: {
+        region: this.selectedRegionIndex,
+        period: this.selectedPeriod,
+        timerange: value,
+      },
+    });
+  }
+
+  onPeriodChange(value: string): void {
+    this.router.navigate(['./'], {
+      relativeTo: this.route,
+      queryParams: {
+        region: this.selectedRegionIndex,
+        period: value,
+        timerange: this.selectedTimeRange,
+      },
+    });
+  }
+
+  private refreshData() {
     let period: HistoricDataPeriod;
     let timeRange: HistoricDataTimeRange;
 
@@ -158,6 +199,8 @@ export class HistoricDataPageComponent implements OnInit, OnDestroy {
         period = '1Minute';
         break;
     }
+
+    console.log('api: ' + period);
 
     this.generationData$ = this.dataService
       .getHistoricData({
