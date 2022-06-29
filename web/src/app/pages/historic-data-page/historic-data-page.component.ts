@@ -1,17 +1,6 @@
-import {
-  Component,
-  ComponentFactoryResolver,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  combineLatest,
-  Observable,
-  shareReplay,
-  Subscription,
-  zip,
-} from 'rxjs';
+import { combineLatest, Observable, shareReplay, Subscription } from 'rxjs';
 import { LineSeries } from '../../shared/components/line-chart/line-chart.component';
 import { Data } from '../../shared/models/data';
 import { Power } from '../../shared/models/power';
@@ -36,23 +25,24 @@ export class HistoricDataPageComponent implements OnInit, OnDestroy {
 
   selectedRegion?: Region;
 
-  timeRanges = [
-    'Last Hour',
-    'Last 3 Hours',
-    'Last 6 Hours',
-    'Last 12 Hours',
-    'Last 24 Hours',
-    'Last 3 Days',
-    'Last 1 Week',
-    'Last 2 Weeks',
+  timeRanges: { label: string; value: HistoricDataTimeRange }[] = [
+    { label: 'Last Hour', value: '1Hour' },
+    { label: 'Last 3 Hours', value: '3Hours' },
+    { label: 'Last 6 Hours', value: '6Hours' },
+    { label: 'Last 12 Hours', value: '12Hours' },
+    { label: 'Last 24 Hours', value: '24Hours' },
+    { label: 'Last 3 Days', value: '3Days' },
+    { label: 'Last 1 Week', value: '1Week' },
+    { label: 'Last 2 Weeks', value: '2Weeks' },
   ];
-  periods = [
-    '1 Minute',
-    '5 Minutes',
-    '15 Minutes',
-    '1 Hour',
-    '6 Hours',
-    '1 Day',
+
+  periods: { label: string; value: HistoricDataPeriod }[] = [
+    { label: '1 Minute', value: '1Minute' },
+    { label: '5 Minutes', value: '5Minutes' },
+    { label: '15 Minutes', value: '15Minutes' },
+    { label: '1 Hour', value: '1Hour' },
+    { label: '6 Hours', value: '6Hours' },
+    { label: '1 Day', value: '1Day' },
   ];
 
   power: Power[] = [];
@@ -73,8 +63,8 @@ export class HistoricDataPageComponent implements OnInit, OnDestroy {
     },
   ];
 
-  selectedTimeRange = '';
-  selectedPeriod = '';
+  selectedTimeRange: HistoricDataTimeRange = '1Hour';
+  selectedPeriod: HistoricDataPeriod = '1Minute';
 
   private selectedRegionIndex = 0;
   private sub!: Subscription;
@@ -96,13 +86,14 @@ export class HistoricDataPageComponent implements OnInit, OnDestroy {
       this.power = power;
       this.regions = regions;
 
+      // update selections from query params if we have them
       this.selectedRegionIndex = Number(paramMap.get('region') || 0);
-      this.selectedPeriod = paramMap.get('period') || '1 Minute';
-      this.selectedTimeRange = paramMap.get('timerange') || 'Last Hour';
-
-      console.log('selectedRegion: ' + this.selectedRegionIndex);
-      console.log('selectedPeriod: ' + this.selectedPeriod);
-      console.log('selectedTimeRange: ' + this.selectedTimeRange);
+      this.selectedPeriod = paramMap.has('period')
+        ? (paramMap.get('period') as HistoricDataPeriod)
+        : '1Minute';
+      this.selectedTimeRange = paramMap.has('timerange')
+        ? (paramMap.get('timerange') as HistoricDataTimeRange)
+        : '1Hour';
 
       this.selectedRegion = this.regions[this.selectedRegionIndex];
 
@@ -149,63 +140,10 @@ export class HistoricDataPageComponent implements OnInit, OnDestroy {
   }
 
   private refreshData() {
-    let period: HistoricDataPeriod;
-    let timeRange: HistoricDataTimeRange;
-
-    switch (this.selectedTimeRange) {
-      case 'Last 3 Hours':
-        timeRange = '3Hours';
-        break;
-      case 'Last 6 Hours':
-        timeRange = '6Hours';
-        break;
-      case 'Last 12 Hours':
-        timeRange = '12Hours';
-        break;
-      case 'Last 24 Hours':
-        timeRange = '24Hours';
-        break;
-      case 'Last 3 Days':
-        timeRange = '3Days';
-        break;
-      case 'Last 1 Week':
-        timeRange = '1Week';
-        break;
-      case 'Last 2 Weeks':
-        timeRange = '2Weeks';
-        break;
-      default:
-        timeRange = '1Hour';
-        break;
-    }
-
-    switch (this.selectedPeriod) {
-      case '5 Minutes':
-        period = '5Minutes';
-        break;
-      case '15 Minutes':
-        period = '15Minutes';
-        break;
-      case '1 Hour':
-        period = '1Hour';
-        break;
-      case '6 Hours':
-        period = '6Hours';
-        break;
-      case '1 Day':
-        period = '1Day';
-        break;
-      default:
-        period = '1Minute';
-        break;
-    }
-
-    console.log('api: ' + period);
-
     this.generationData$ = this.dataService
       .getHistoricData({
-        period,
-        timeRange,
+        period: this.selectedPeriod,
+        timeRange: this.selectedTimeRange,
         regionId: this.regions[this.selectedRegionIndex].id,
         powerId: this.power.find((x) => x.type === 'generation')?.id,
       })
@@ -213,8 +151,8 @@ export class HistoricDataPageComponent implements OnInit, OnDestroy {
 
     this.demandData$ = this.dataService
       .getHistoricData({
-        period,
-        timeRange,
+        period: this.selectedPeriod,
+        timeRange: this.selectedTimeRange,
         regionId: this.regions[this.selectedRegionIndex].id,
         powerId: this.power.find((x) => x.type === 'demand')?.id,
       })
