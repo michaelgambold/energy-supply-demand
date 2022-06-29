@@ -3,6 +3,9 @@ import { Power } from './power';
 import { Region } from './region';
 
 export interface Data {
+  startTimestamp: string;
+  endTimestamp: string;
+  recordCount: number;
   metadata: {
     fuels: Fuel[];
     power: Power[];
