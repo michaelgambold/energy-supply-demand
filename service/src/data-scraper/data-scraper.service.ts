@@ -4,7 +4,7 @@ import { InjectQueue } from '@nestjs/bull';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Queue } from 'bull';
-import { format } from 'date-fns';
+import { isAfter, isBefore } from 'date-fns';
 import { CreateDatumDto } from '../data/dto/create-datum.dto';
 import { DataDto } from '../data/dto/data.dto';
 import { DataFact } from '../entities/DataFact.entity';
@@ -162,6 +162,25 @@ export class DataScraperService {
             if (!dto.metadata.regions.includes(dataFact.region)) {
               dto.metadata.regions.push(dataFact.region);
             }
+
+            if (!dto.startTimestamp) {
+              dto.startTimestamp = dataFact.timestamp.toISOString();
+            } else if (
+              isBefore(dataFact.timestamp, new Date(dto.startTimestamp))
+            ) {
+              dto.startTimestamp = dataFact.timestamp.toISOString();
+            }
+
+            if (!dto.endTimestamp) {
+              dto.endTimestamp = dataFact.timestamp.toISOString();
+            } else if (
+              isAfter(dataFact.timestamp, new Date(dto.endTimestamp))
+            ) {
+              dto.endTimestamp = dataFact.timestamp.toISOString();
+            }
+
+            dto.recordCount = dto.recordCount + 1;
+
             dto.data.push({
               fuelId: dataFact.fuel.id,
               powerId: dataFact.power.id,
@@ -173,6 +192,9 @@ export class DataScraperService {
             return dto;
           },
           {
+            startTimestamp: '',
+            endTimestamp: '',
+            recordCount: 0,
             metadata: {
               fuels: [],
               power: [],

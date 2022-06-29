@@ -1,4 +1,7 @@
 export class DataDto {
+  startTimestamp: string;
+  endTimestamp: string;
+  recordCount: number;
   metadata: {
     fuels: Fuel[];
     regions: Region[];

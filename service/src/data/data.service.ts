@@ -94,6 +94,8 @@ export class DataService {
       ])
       .join('df.date', 'dd')
       .join('df.time', 'td')
+      .where({ timestamp: { $gte: args.startDate } })
+      .andWhere({ timestamp: { $lte: args.endDate } })
       .groupBy([
         'dd.year',
         'dd.month_number',
@@ -165,6 +167,8 @@ export class DataService {
       ])
       .join('df.date', 'dd')
       .join('df.time', 'td')
+      .where({ timestamp: { $gte: args.startDate } })
+      .andWhere({ timestamp: { $lte: args.endDate } })
       .groupBy([
         'dd.year',
         'dd.month_number',
@@ -234,6 +238,8 @@ export class DataService {
       ])
       .join('df.date', 'dd')
       .join('df.time', 'td')
+      .where({ timestamp: { $gte: args.startDate } })
+      .andWhere({ timestamp: { $lte: args.endDate } })
       .groupBy([
         'dd.year',
         'dd.month_number',
@@ -301,6 +307,8 @@ export class DataService {
       ])
       .join('df.date', 'dd')
       .join('df.time', 'td')
+      .where({ timestamp: { $gte: args.startDate } })
+      .andWhere({ timestamp: { $lte: args.endDate } })
       .groupBy([
         'dd.year',
         'dd.month_number',
@@ -365,6 +373,8 @@ export class DataService {
         'avg(value) as value',
       ])
       .join('df.date', 'dd')
+      .where({ timestamp: { $gte: args.startDate } })
+      .andWhere({ timestamp: { $lte: args.endDate } })
       .groupBy([
         'dd.year',
         'dd.month_number',
