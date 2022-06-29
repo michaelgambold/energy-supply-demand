@@ -34,10 +34,7 @@ export class DataService {
     powerId?: number;
     regionId?: number;
   }): Observable<Data> {
-    const urlParams = new URLSearchParams({
-      timerange: args.timeRange,
-      period: args.period,
-    });
+    const urlParams = new URLSearchParams();
 
     if (args.fuelId) {
       urlParams.append('fuel', args.fuelId.toString());

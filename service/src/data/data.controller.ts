@@ -6,7 +6,7 @@ import {
   Param,
   Query,
 } from '@nestjs/common';
-import { subDays, subHours, subWeeks } from 'date-fns';
+import { isAfter, isBefore, subDays, subHours, subWeeks } from 'date-fns';
 import { FuelService } from '../fuel/fuel.service';
 import { PowerService } from '../power/power.service';
 import { RegionService } from '../region/region.service';
@@ -123,6 +123,21 @@ export class DataController {
             dto.metadata.regions.push(r);
           }
 
+          // update start/end/record count
+          if (!dto.startTimestamp) {
+            dto.startTimestamp = input.timestamp.toISOString();
+          } else if (isBefore(input.timestamp, new Date(dto.startTimestamp))) {
+            dto.startTimestamp = input.timestamp.toISOString();
+          }
+
+          if (!dto.endTimestamp) {
+            dto.endTimestamp = input.timestamp.toISOString();
+          } else if (isAfter(input.timestamp, new Date(dto.endTimestamp))) {
+            dto.endTimestamp = input.timestamp.toISOString();
+          }
+
+          dto.recordCount = dto.recordCount + 1;
+
           // add data point
           dto.data.push({
             fuelId: input.fuelId,
@@ -138,6 +153,9 @@ export class DataController {
           return dto;
         },
         {
+          startTimestamp: '',
+          endTimestamp: '',
+          recordCount: 0,
           metadata: {
             fuels: [],
             regions: [],

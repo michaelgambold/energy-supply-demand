@@ -9,9 +9,9 @@ import {
   WebSocketGateway,
 } from '@nestjs/websockets';
 import { Job } from 'bull';
+import { isAfter, isBefore } from 'date-fns';
 import { Socket } from 'socket.io';
 import { DataFact } from '../entities/DataFact.entity';
-import { DataService } from './data.service';
 import { DataDto } from './dto/data.dto';
 
 @WebSocketGateway({ namespace: 'data' })
@@ -83,6 +83,20 @@ export class DataGateway implements OnGatewayConnection, OnGatewayDisconnect {
           dto.metadata.regions.push(dataFact.region);
         }
 
+        if (!dto.startTimestamp) {
+          dto.startTimestamp = dataFact.timestamp.toISOString();
+        } else if (isBefore(dataFact.timestamp, new Date(dto.startTimestamp))) {
+          dto.startTimestamp = dataFact.timestamp.toISOString();
+        }
+
+        if (!dto.endTimestamp) {
+          dto.endTimestamp = dataFact.timestamp.toISOString();
+        } else if (isAfter(dataFact.timestamp, new Date(dto.endTimestamp))) {
+          dto.endTimestamp = dataFact.timestamp.toISOString();
+        }
+
+        dto.recordCount = dto.recordCount + 1;
+
         dto.data.push({
           fuelId: dataFact.fuel.id,
           powerId: dataFact.power.id,
@@ -94,6 +108,9 @@ export class DataGateway implements OnGatewayConnection, OnGatewayDisconnect {
         return dto;
       },
       {
+        startTimestamp: '',
+        endTimestamp: '',
+        recordCount: 0,
         metadata: {
           fuels: [],
           power: [],
