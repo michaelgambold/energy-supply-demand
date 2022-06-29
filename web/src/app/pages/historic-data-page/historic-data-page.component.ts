@@ -65,8 +65,8 @@ export class HistoricDataPageComponent implements OnInit, OnDestroy {
 
   selectedTimeRange: HistoricDataTimeRange = '1Hour';
   selectedPeriod: HistoricDataPeriod = '1Minute';
+  selectedRegionIndex = 0;
 
-  private selectedRegionIndex = 0;
   private sub!: Subscription;
 
   constructor(
@@ -117,7 +117,6 @@ export class HistoricDataPageComponent implements OnInit, OnDestroy {
   }
 
   onTimeRangeChange(value: string): void {
-    console.log(value);
     this.router.navigate(['./'], {
       relativeTo: this.route,
       queryParams: {

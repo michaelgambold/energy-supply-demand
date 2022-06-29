@@ -36,7 +36,10 @@
 
   <!-- region tab bar -->
   <div class="pb-8" *ngIf="regions; else spinner">
-    <mat-tab-group (selectedIndexChange)="onRegionTabChange($event)">
+    <mat-tab-group
+      [selectedIndex]="selectedRegionIndex"
+      (selectedIndexChange)="onRegionTabChange($event)"
+    >
       <mat-tab *ngFor="let region of regions" [label]="region.name"
         ><ng-container [ngTemplateOutlet]="regionData"></ng-container
       ></mat-tab>
