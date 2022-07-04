@@ -60,27 +60,6 @@ export class DataController {
       this.powerService.findAll(),
     ]);
 
-    const fuels: Partial<FuelDimension>[] = [
-      {
-        id: 1,
-        name: 'Green',
-        ref: 'green',
-        type: 'green',
-      },
-      {
-        id: 2,
-        name: 'Fossil',
-        ref: 'fossil',
-        type: 'fossil',
-      },
-      {
-        id: 3,
-        name: 'Unknown',
-        ref: 'unknown',
-        type: 'unknown',
-      },
-    ];
-
     const regionId = region && parseInt(region);
     const powerId = power && parseInt(power);
 
@@ -105,13 +84,7 @@ export class DataController {
             value: x.value,
           };
         });
-        console.log(greenOneMinData);
-        return this.mapToDto(
-          fuels as FuelDimension[],
-          powers,
-          regions,
-          greenOneMinData,
-        );
+        return greenOneMinData;
       // case '5Minutes':
       //   const fiveMinData =
       //     await this.dataService.findFuelTypeDataRange5MinutePeriod({
@@ -138,8 +111,7 @@ export class DataController {
             regionId,
             powerId,
           });
-        // return this.mapToDto(fuels, powers, regions, oneHourData);
-        return oneHourData;
+        return this.mapFuelTypeGroupSumToDto(powers, regions, oneHourData);
       // case '6Hours':
       //   const sixHourData =
       //     await this.dataService.findFuelTypeDataRange6HourPeriod({
@@ -256,6 +228,126 @@ export class DataController {
       default:
         throw new BadRequestException('Invalid period');
     }
+  }
+
+  private mapFuelTypeGroupSumToDto(
+    powers: PowerDimension[],
+    regions: RegionDimension[],
+    input: {
+      regionId: number;
+      powerId: number;
+      timestamp: Date;
+      greenSum: string | null;
+      fossilSum: string | null;
+      unknownSum: string | null;
+      allSum: string; // cannot be null otherwise there would be no timestamp for this data point
+    }[],
+  ): DataDto {
+    const greenFuel: Partial<FuelDimension> = {
+      id: 1,
+      name: 'Green',
+      ref: 'green',
+      type: 'green',
+    };
+    const fossilFuel: Partial<FuelDimension> = {
+      id: 2,
+      name: 'Fossil',
+      ref: 'fossil',
+      type: 'fossil',
+    };
+    const unknownFuel: Partial<FuelDimension> = {
+      id: 3,
+      name: 'Unknown',
+      ref: 'unknown',
+      type: 'unknown',
+    };
+
+    const fuels: FuelDimension[] = [
+      greenFuel as FuelDimension,
+      fossilFuel as FuelDimension,
+      unknownFuel as FuelDimension,
+    ];
+
+    const dataDto: DataDto = input.reduce(
+      (dto: DataDto, input) => {
+        const r = regions.find((x) => x.id === input.regionId);
+        const p = powers.find((x) => x.id === input.powerId);
+
+        // add meta data if it does not exist already
+        if (!dto.metadata.power.includes(p)) {
+          dto.metadata.power.push(p);
+        }
+
+        if (!dto.metadata.regions.includes(r)) {
+          dto.metadata.regions.push(r);
+        }
+
+        // update start/end/record count
+        if (!dto.startTimestamp) {
+          dto.startTimestamp = input.timestamp.toISOString();
+        } else if (isBefore(input.timestamp, new Date(dto.startTimestamp))) {
+          dto.startTimestamp = input.timestamp.toISOString();
+        }
+
+        if (!dto.endTimestamp) {
+          dto.endTimestamp = input.timestamp.toISOString();
+        } else if (isAfter(input.timestamp, new Date(dto.endTimestamp))) {
+          dto.endTimestamp = input.timestamp.toISOString();
+        }
+
+        dto.recordCount = dto.recordCount + 3;
+
+        // add 3 fuel data points
+        dto.data = [
+          ...dto.data,
+          {
+            fuelId: greenFuel.id,
+            powerId: input.powerId,
+            regionId: input.regionId,
+            timestamp: input.timestamp,
+            value:
+              input.greenSum && input.allSum
+                ? (parseInt(input.greenSum) / parseInt(input.allSum)) * 100
+                : 0,
+          },
+          {
+            fuelId: fossilFuel.id,
+            powerId: input.powerId,
+            regionId: input.regionId,
+            timestamp: input.timestamp,
+            value:
+              input.fossilSum && input.allSum
+                ? (parseInt(input.fossilSum) / parseInt(input.allSum)) * 100
+                : 0,
+          },
+          {
+            fuelId: unknownFuel.id,
+            powerId: input.powerId,
+            regionId: input.regionId,
+            timestamp: input.timestamp,
+            value:
+              input.unknownSum && input.allSum
+                ? (parseInt(input.unknownSum) / parseInt(input.allSum)) * 100
+                : 0,
+          },
+        ];
+
+        return dto;
+      },
+      {
+        startTimestamp: '',
+        endTimestamp: '',
+        recordCount: 0,
+        metadata: {
+          fuels,
+          regions: [],
+          power: [],
+        },
+        data: [],
+      },
+    );
+
+    return dataDto;
   }
 
   private mapToDto(
