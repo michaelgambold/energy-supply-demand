@@ -7,6 +7,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { isAfter, isBefore, subDays, subHours, subWeeks } from 'date-fns';
+import { FuelDimension } from '../entities/FuelDimension.entity';
+import { PowerDimension } from '../entities/PowerDimension.entity';
+import { RegionDimension } from '../entities/RegionDimension.entity';
 import { FuelService } from '../fuel/fuel.service';
 import { PowerService } from '../power/power.service';
 import { RegionService } from '../region/region.service';
@@ -42,6 +45,124 @@ export class DataController {
     private readonly regionService: RegionService,
   ) {}
 
+  @Get('/groupby/fueltype/timerange/:timerange/period/:period')
+  async findFuelTypesData(
+    @Param('timerange') timeRange: TimeRange,
+    @Param('period') period: Period,
+    @Query('region') region: string,
+    @Query('power') power: string,
+  ) {
+    if (!timeRange) throw new BadRequestException('Time range cannot be null');
+    if (!period) throw new BadRequestException('Period cannot be null');
+
+    const [regions, powers] = await Promise.all([
+      this.regionService.findAll(),
+      this.powerService.findAll(),
+    ]);
+
+    const fuels: Partial<FuelDimension>[] = [
+      {
+        id: 1,
+        name: 'Green',
+        ref: 'green',
+        type: 'green',
+      },
+      {
+        id: 2,
+        name: 'Fossil',
+        ref: 'fossil',
+        type: 'fossil',
+      },
+      {
+        id: 3,
+        name: 'Unknown',
+        ref: 'unknown',
+        type: 'unknown',
+      },
+    ];
+
+    const regionId = region && parseInt(region);
+    const powerId = power && parseInt(power);
+
+    const endDate = new Date();
+    const startDate = this.getStartDate(endDate, timeRange);
+
+    switch (period) {
+      case '1Minute':
+        const greenOneMinData = (
+          await this.dataService.findGreenFuelDataRange1MinutePeriod({
+            startDate,
+            endDate,
+            regionId,
+            powerId,
+          })
+        ).map((x) => {
+          return {
+            fuelId: 1,
+            regionId: x.regionId,
+            powerId: x.powerId,
+            timestamp: x.timestamp,
+            value: x.value,
+          };
+        });
+        console.log(greenOneMinData);
+        return this.mapToDto(
+          fuels as FuelDimension[],
+          powers,
+          regions,
+          greenOneMinData,
+        );
+      // case '5Minutes':
+      //   const fiveMinData =
+      //     await this.dataService.findFuelTypeDataRange5MinutePeriod({
+      //       startDate,
+      //       endDate,
+      //       regionId,
+      //       powerId,
+      //     });
+      //   return this.mapToDto(fuels, powers, regions, fiveMinData);
+      // case '15Minutes':
+      //   const fifteenMinData =
+      //     await this.dataService.findFuelTypeDataRange15MinutePeriod({
+      //       startDate,
+      //       endDate,
+      //       regionId,
+      //       powerId,
+      //     });
+      //   return this.mapToDto(fuels, powers, regions, fifteenMinData);
+      case '1Hour':
+        const oneHourData =
+          await this.dataService.findFuelTypeGroupedDataRange1HourPeriod({
+            startDate,
+            endDate,
+            regionId,
+            powerId,
+          });
+        // return this.mapToDto(fuels, powers, regions, oneHourData);
+        return oneHourData;
+      // case '6Hours':
+      //   const sixHourData =
+      //     await this.dataService.findFuelTypeDataRange6HourPeriod({
+      //       startDate,
+      //       endDate,
+      //       regionId,
+      //       powerId,
+      //     });
+      //   return this.mapToDto(fuels, powers, regions, sixHourData);
+      // case '1Day':
+      //   const oneDayData =
+      //     await this.dataService.findFuelTypeDataRange1DayPeriod({
+      //       startDate,
+      //       endDate,
+      //       regionId,
+      //       powerId,
+      //     });
+      //   return this.mapToDto(fuels, powers, regions, oneDayData);
+      default:
+        throw new BadRequestException('Invalid period');
+    }
+  }
+
   @Get('/timerange/:timerange/period/:period')
   async findData(
     @Param('timerange') timeRange: TimeRange,
@@ -64,109 +185,7 @@ export class DataController {
     const fuelId = fuel && parseInt(fuel);
 
     const endDate = new Date();
-    let startDate: Date;
-
-    switch (timeRange) {
-      case '1Hour':
-        startDate = subHours(endDate, 1);
-        break;
-      case '3Hours':
-        startDate = subHours(endDate, 3);
-        break;
-      case '6Hours':
-        startDate = subHours(endDate, 6);
-        break;
-      case '12Hours':
-        startDate = subHours(endDate, 12);
-        break;
-      case '24Hours':
-        startDate = subHours(endDate, 24);
-        break;
-      case '3Days':
-        startDate = subDays(endDate, 3);
-        break;
-      case '1Week':
-        startDate = subWeeks(endDate, 1);
-        break;
-      case '2Weeks':
-        startDate = subWeeks(endDate, 2);
-        break;
-      default:
-        throw new BadRequestException('Invalid time range');
-    }
-
-    const mapToDto = (
-      input: {
-        fuelId: number;
-        regionId: number;
-        powerId: number;
-        timestamp: Date;
-        value: number | string;
-      }[],
-    ): DataDto => {
-      const dataDto: DataDto = input.reduce(
-        (dto: DataDto, input) => {
-          const f = fuels.find((x) => x.id === input.fuelId);
-          const r = regions.find((x) => x.id === input.regionId);
-          const p = powers.find((x) => x.id === input.powerId);
-
-          // add meta data if it does not exist already
-          if (!dto.metadata.fuels.includes(f)) {
-            dto.metadata.fuels.push(f);
-          }
-
-          if (!dto.metadata.power.includes(p)) {
-            dto.metadata.power.push(p);
-          }
-
-          if (!dto.metadata.regions.includes(r)) {
-            dto.metadata.regions.push(r);
-          }
-
-          // update start/end/record count
-          if (!dto.startTimestamp) {
-            dto.startTimestamp = input.timestamp.toISOString();
-          } else if (isBefore(input.timestamp, new Date(dto.startTimestamp))) {
-            dto.startTimestamp = input.timestamp.toISOString();
-          }
-
-          if (!dto.endTimestamp) {
-            dto.endTimestamp = input.timestamp.toISOString();
-          } else if (isAfter(input.timestamp, new Date(dto.endTimestamp))) {
-            dto.endTimestamp = input.timestamp.toISOString();
-          }
-
-          dto.recordCount = dto.recordCount + 1;
-
-          // add data point
-          dto.data.push({
-            fuelId: input.fuelId,
-            powerId: input.powerId,
-            regionId: input.regionId,
-            timestamp: input.timestamp,
-            value:
-              typeof input.value === 'string'
-                ? parseFloat(input.value)
-                : input.value,
-          });
-
-          return dto;
-        },
-        {
-          startTimestamp: '',
-          endTimestamp: '',
-          recordCount: 0,
-          metadata: {
-            fuels: [],
-            regions: [],
-            power: [],
-          },
-          data: [],
-        },
-      );
-
-      return dataDto;
-    };
+    const startDate = this.getStartDate(endDate, timeRange);
 
     switch (period) {
       case '1Minute':
@@ -187,7 +206,7 @@ export class DataController {
             value: x.value,
           };
         });
-        return mapToDto(oneMinData);
+        return this.mapToDto(fuels, powers, regions, oneMinData);
       case '5Minutes':
         const fiveMinData = await this.dataService.findDataRange5MinutePeriod({
           startDate,
@@ -196,7 +215,7 @@ export class DataController {
           fuelId,
           powerId,
         });
-        return mapToDto(fiveMinData);
+        return this.mapToDto(fuels, powers, regions, fiveMinData);
       case '15Minutes':
         const fifteenMinData =
           await this.dataService.findDataRange15MinutePeriod({
@@ -206,7 +225,7 @@ export class DataController {
             fuelId,
             powerId,
           });
-        return mapToDto(fifteenMinData);
+        return this.mapToDto(fuels, powers, regions, fifteenMinData);
       case '1Hour':
         const oneHourData = await this.dataService.findDataRange1HourPeriod({
           startDate,
@@ -215,7 +234,7 @@ export class DataController {
           fuelId,
           powerId,
         });
-        return mapToDto(oneHourData);
+        return this.mapToDto(fuels, powers, regions, oneHourData);
       case '6Hours':
         const sixHourData = await this.dataService.findDataRange6HourPeriod({
           startDate,
@@ -224,7 +243,7 @@ export class DataController {
           fuelId,
           powerId,
         });
-        return mapToDto(sixHourData);
+        return this.mapToDto(fuels, powers, regions, sixHourData);
       case '1Day':
         const oneDayData = await this.dataService.findDataRange1DayPeriod({
           startDate,
@@ -233,9 +252,108 @@ export class DataController {
           fuelId,
           powerId,
         });
-        return mapToDto(oneDayData);
+        return this.mapToDto(fuels, powers, regions, oneDayData);
       default:
         throw new BadRequestException('Invalid period');
+    }
+  }
+
+  private mapToDto(
+    fuels: FuelDimension[],
+    powers: PowerDimension[],
+    regions: RegionDimension[],
+    input: {
+      fuelId: number;
+      regionId: number;
+      powerId: number;
+      timestamp: Date;
+      value: number | string;
+    }[],
+  ): DataDto {
+    const dataDto: DataDto = input.reduce(
+      (dto: DataDto, input) => {
+        const f = fuels.find((x) => x.id === input.fuelId);
+        const r = regions.find((x) => x.id === input.regionId);
+        const p = powers.find((x) => x.id === input.powerId);
+
+        // add meta data if it does not exist already
+        if (!dto.metadata.fuels.includes(f)) {
+          dto.metadata.fuels.push(f);
+        }
+
+        if (!dto.metadata.power.includes(p)) {
+          dto.metadata.power.push(p);
+        }
+
+        if (!dto.metadata.regions.includes(r)) {
+          dto.metadata.regions.push(r);
+        }
+
+        // update start/end/record count
+        if (!dto.startTimestamp) {
+          dto.startTimestamp = input.timestamp.toISOString();
+        } else if (isBefore(input.timestamp, new Date(dto.startTimestamp))) {
+          dto.startTimestamp = input.timestamp.toISOString();
+        }
+
+        if (!dto.endTimestamp) {
+          dto.endTimestamp = input.timestamp.toISOString();
+        } else if (isAfter(input.timestamp, new Date(dto.endTimestamp))) {
+          dto.endTimestamp = input.timestamp.toISOString();
+        }
+
+        dto.recordCount = dto.recordCount + 1;
+
+        // add data point
+        dto.data.push({
+          fuelId: input.fuelId,
+          powerId: input.powerId,
+          regionId: input.regionId,
+          timestamp: input.timestamp,
+          value:
+            typeof input.value === 'string'
+              ? parseFloat(input.value)
+              : input.value,
+        });
+
+        return dto;
+      },
+      {
+        startTimestamp: '',
+        endTimestamp: '',
+        recordCount: 0,
+        metadata: {
+          fuels: [],
+          regions: [],
+          power: [],
+        },
+        data: [],
+      },
+    );
+
+    return dataDto;
+  }
+
+  private getStartDate(endDate: Date, timeRange: TimeRange): Date {
+    switch (timeRange) {
+      case '1Hour':
+        return subHours(endDate, 1);
+      case '3Hours':
+        return subHours(endDate, 3);
+      case '6Hours':
+        return subHours(endDate, 6);
+      case '12Hours':
+        return subHours(endDate, 12);
+      case '24Hours':
+        return subHours(endDate, 24);
+      case '3Days':
+        return subDays(endDate, 3);
+      case '1Week':
+        return subWeeks(endDate, 1);
+      case '2Weeks':
+        return subWeeks(endDate, 2);
+      default:
+        throw new BadRequestException('Invalid time range');
     }
   }
 }

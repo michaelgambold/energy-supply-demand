@@ -403,4 +403,446 @@ export class DataService {
 
     return qb.execute();
   }
+
+  async findGreenFuelDataRange1MinutePeriod(args: {
+    startDate: Date;
+    endDate: Date;
+    powerId?: number;
+    regionId?: number;
+  }): Promise<
+    {
+      regionId: number;
+      powerId: number;
+      timestamp: Date;
+      value: string;
+    }[]
+  > {
+    this.logger.log('Find green fuel data range with 1 minute period');
+
+    const qb = this.dataFactRepository
+      .qb('df')
+      .select([
+        'min(timestamp) as timestamp',
+        'df.region_id as regionId',
+        'df.power_id as powerId',
+        'sum(value) as value',
+      ])
+      .join('df.date', 'dd')
+      .join('df.time', 'td')
+      .join('df.fuel', 'fd')
+      // .where({ fuel: { type: 'green' } })
+      .andWhere({ timestamp: { $gte: args.startDate } })
+      .andWhere({ timestamp: { $lte: args.endDate } })
+      .groupBy([
+        'dd.year',
+        'dd.month_number',
+        'dd.day_of_month',
+        'td.hour',
+        'td.minute',
+        'df.region_id',
+        'df.power_id',
+      ])
+      .orderBy([
+        { date: { year: QueryOrder.ASC } },
+        { date: { monthNumber: QueryOrder.ASC } },
+        { date: { dayOfMonth: QueryOrder.ASC } },
+        { time: { hour: QueryOrder.ASC } },
+      ]);
+
+    if (args.powerId) {
+      qb.andWhere({ power: args.powerId });
+    }
+
+    if (args.regionId) {
+      qb.andWhere({ region: args.regionId });
+    }
+
+    return qb.execute();
+  }
+
+  async findGreenFuelDataRange5MinutePeriod(args: {
+    startDate: Date;
+    endDate: Date;
+    fuelId?: number;
+    powerId?: number;
+    regionId?: number;
+  }): Promise<
+    {
+      year: number;
+      monthNumber: number;
+      dayOfMonth: number;
+      hour: number;
+      twelfthOfHour: number;
+      fuelId: number;
+      regionId: number;
+      powerId: number;
+      timestamp: Date;
+      value: string;
+    }[]
+  > {
+    this.logger.log('Find data range with 5 minute period');
+
+    const qb = this.dataFactRepository
+      .qb('df')
+      .select([
+        'dd.year as year',
+        'dd.month_number as monthNumber',
+        'dd.day_of_month as dayOfMonth',
+        'td.hour as hour',
+        'td.twelfth_of_hour as twelfthOfHour',
+        'df.fuel_id as fuelId',
+        'df.region_id as regionId',
+        'df.power_id as powerId',
+        'min(timestamp) as timestamp',
+        'avg(value) as value',
+      ])
+      .join('df.date', 'dd')
+      .join('df.time', 'td')
+      .where({ timestamp: { $gte: args.startDate } })
+      .andWhere({ timestamp: { $lte: args.endDate } })
+      .groupBy([
+        'dd.year',
+        'dd.month_number',
+        'dd.day_of_month',
+        'td.hour',
+        'td.twelfth_of_hour',
+        'df.fuel_id',
+        'df.region_id',
+        'df.power_id',
+      ])
+      .orderBy([
+        { date: { year: QueryOrder.ASC } },
+        { date: { monthNumber: QueryOrder.ASC } },
+        { date: { dayOfMonth: QueryOrder.ASC } },
+        { time: { hour: QueryOrder.ASC } },
+        { time: { twelfthOfHour: QueryOrder.ASC } },
+      ]);
+
+    if (args.fuelId) {
+      qb.andWhere({ fuel: args.fuelId });
+    }
+
+    if (args.powerId) {
+      qb.andWhere({ power: args.powerId });
+    }
+
+    if (args.regionId) {
+      qb.andWhere({ region: args.regionId });
+    }
+
+    return qb.execute();
+  }
+
+  async findGreenFuelDataRange15MinutePeriod(args: {
+    startDate: Date;
+    endDate: Date;
+    fuelId?: number;
+    powerId?: number;
+    regionId?: number;
+  }): Promise<
+    {
+      year: number;
+      monthNumber: number;
+      dayOfMonth: number;
+      hour: number;
+      quarterOfHour: number;
+      fuelId: number;
+      regionId: number;
+      powerId: number;
+      timestamp: Date;
+      value: string;
+    }[]
+  > {
+    this.logger.log('Find data range with 15 minute period');
+
+    const qb = this.dataFactRepository
+      .qb('df')
+      .select([
+        'dd.year as year',
+        'dd.month_number as monthNumber',
+        'dd.day_of_month as dayOfMonth',
+        'td.hour as hour',
+        'td.quarter_of_hour as quarterOfHour',
+        'df.fuel_id as fuelId',
+        'df.region_id as regionId',
+        'df.power_id as powerId',
+        'min(timestamp) as timestamp',
+        'avg(value) as value',
+      ])
+      .join('df.date', 'dd')
+      .join('df.time', 'td')
+      .where({ timestamp: { $gte: args.startDate } })
+      .andWhere({ timestamp: { $lte: args.endDate } })
+      .groupBy([
+        'dd.year',
+        'dd.month_number',
+        'dd.day_of_month',
+        'td.hour',
+        'td.quarter_of_hour',
+        'df.fuel_id',
+        'df.region_id',
+        'df.power_id',
+      ])
+      .orderBy([
+        { date: { year: QueryOrder.ASC } },
+        { date: { monthNumber: QueryOrder.ASC } },
+        { date: { dayOfMonth: QueryOrder.ASC } },
+        { time: { hour: QueryOrder.ASC } },
+        { time: { quarterOfHour: QueryOrder.ASC } },
+      ]);
+
+    if (args.fuelId) {
+      qb.andWhere({ fuel: args.fuelId });
+    }
+
+    if (args.powerId) {
+      qb.andWhere({ power: args.powerId });
+    }
+
+    if (args.regionId) {
+      qb.andWhere({ region: args.regionId });
+    }
+
+    return qb.execute();
+  }
+
+  async findFuelTypeGroupedDataRange1HourPeriod(args: {
+    startDate: Date;
+    endDate: Date;
+    fuelId?: number;
+    powerId?: number;
+    regionId?: number;
+  }): Promise<any> {
+    this.logger.log('Find grouped fuel type data range with 1 hour period');
+
+    const knex = this.dataFactRepository.getKnex();
+
+    const greenQb = this.dataFactRepository
+      .qb('green')
+      .select(['sum(value)'])
+      .join('green.date', 'sdd')
+      .join('green.time', 'std')
+      .where({ fuel: { type: { $eq: 'green' } } })
+      .andWhere({ 'green.region_id': { $eq: knex.ref('df.region_id') } })
+      .andWhere({ 'green.power_id': { $eq: knex.ref('df.power_id') } })
+      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
+      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
+      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
+      .as('greenSum');
+
+    const fossilQb = this.dataFactRepository
+      .qb('fossil')
+      .select(['sum(value)'])
+      .join('fossil.date', 'sdd')
+      .join('fossil.time', 'std')
+      .where({ fuel: { type: { $eq: 'fossil' } } })
+      .andWhere({ 'fossil.region_id': { $eq: knex.ref('df.region_id') } })
+      .andWhere({ 'fossil.power_id': { $eq: knex.ref('df.power_id') } })
+      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
+      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
+      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
+      .as('fossilSum');
+
+    const unknownQb = this.dataFactRepository
+      .qb('unknown')
+      .select(['sum(value)'])
+      .join('unknown.date', 'sdd')
+      .join('unknown.time', 'std')
+      .where({ fuel: { type: { $eq: 'unknown' } } })
+      .andWhere({ 'unknown.region_id': { $eq: knex.ref('df.region_id') } })
+      .andWhere({ 'unknown.power_id': { $eq: knex.ref('df.power_id') } })
+      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
+      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
+      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
+      .as('unknownSum');
+
+    const allQb = this.dataFactRepository
+      .qb('all')
+      .select(['sum(value)'])
+      .join('all.date', 'sdd')
+      .join('all.time', 'std')
+      .andWhere({ 'all.region_id': { $eq: knex.ref('df.region_id') } })
+      .andWhere({ 'all.power_id': { $eq: knex.ref('df.power_id') } })
+      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
+      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
+      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
+      .as('allSum');
+
+    const qb = this.dataFactRepository
+      .qb('df')
+      .select([
+        'min(timestamp) as timestamp',
+        'df.region_id as regionId',
+        'df.power_id as powerId',
+        greenQb,
+        fossilQb,
+        unknownQb,
+        allQb,
+      ])
+      .join('df.date', 'dd')
+      .join('df.time', 'td')
+      .where({ timestamp: { $gte: args.startDate } })
+      .andWhere({ timestamp: { $lte: args.endDate } })
+      .groupBy([
+        'dd.year',
+        'dd.month_number',
+        'dd.day_of_month',
+        'td.hour',
+        'df.region_id',
+        'df.power_id',
+      ])
+      .orderBy([
+        { date: { year: QueryOrder.ASC } },
+        { date: { monthNumber: QueryOrder.ASC } },
+        { date: { dayOfMonth: QueryOrder.ASC } },
+        { time: { hour: QueryOrder.ASC } },
+      ]);
+
+    if (args.powerId) {
+      qb.andWhere({ power: args.powerId });
+    }
+
+    if (args.regionId) {
+      qb.andWhere({ region: args.regionId });
+    }
+
+    return qb.execute();
+  }
+
+  async findGreenFuelDataRange6HourPeriod(args: {
+    startDate: Date;
+    endDate: Date;
+    fuelId?: number;
+    powerId?: number;
+    regionId?: number;
+  }): Promise<
+    {
+      year: number;
+      monthNumber: number;
+      dayOfMonth: number;
+      quaterOfHour: number;
+      fuelId: number;
+      regionId: number;
+      powerId: number;
+      timestamp: Date;
+      value: string;
+    }[]
+  > {
+    this.logger.log('Find data range with 6 hour period');
+
+    const qb = this.dataFactRepository
+      .qb('df')
+      .select([
+        'dd.year as year',
+        'dd.month_number as monthNumber',
+        'dd.day_of_month as dayOfMonth',
+        'td.quarter_of_day as quarterOfDay',
+        'df.fuel_id as fuelId',
+        'df.region_id as regionId',
+        'df.power_id as powerId',
+        'min(timestamp) as timestamp',
+        'avg(value) as value',
+      ])
+      .join('df.date', 'dd')
+      .join('df.time', 'td')
+      .where({ timestamp: { $gte: args.startDate } })
+      .andWhere({ timestamp: { $lte: args.endDate } })
+      .groupBy([
+        'dd.year',
+        'dd.month_number',
+        'dd.day_of_month',
+        'td.quarter_of_day',
+        'df.fuel_id',
+        'df.region_id',
+        'df.power_id',
+      ])
+      .orderBy([
+        { date: { year: QueryOrder.ASC } },
+        { date: { monthNumber: QueryOrder.ASC } },
+        { date: { dayOfMonth: QueryOrder.ASC } },
+        { time: { quarterOfDay: QueryOrder.ASC } },
+      ]);
+
+    if (args.fuelId) {
+      qb.andWhere({ fuel: args.fuelId });
+    }
+
+    if (args.powerId) {
+      qb.andWhere({ power: args.powerId });
+    }
+
+    if (args.regionId) {
+      qb.andWhere({ region: args.regionId });
+    }
+
+    return qb.execute();
+  }
+
+  async findGreenFuelDataRange1DayPeriod(args: {
+    startDate: Date;
+    endDate: Date;
+    fuelId?: number;
+    powerId?: number;
+    regionId?: number;
+  }): Promise<
+    {
+      year: number;
+      monthNumber: number;
+      dayOfMonth: number;
+      fuelId: number;
+      regionId: number;
+      powerId: number;
+      timestamp: Date;
+      value: string;
+    }[]
+  > {
+    this.logger.log('Find data range with 1 day period');
+
+    const qb = this.dataFactRepository
+      .qb('df')
+      .select([
+        'dd.year as year',
+        'dd.month_number as monthNumber',
+        'dd.day_of_month as dayOfMonth',
+        'df.fuel_id as fuelId',
+        'df.region_id as regionId',
+        'df.power_id as powerId',
+        'min(timestamp) as timestamp',
+        'avg(value) as value',
+      ])
+      .join('df.date', 'dd')
+      .where({ timestamp: { $gte: args.startDate } })
+      .andWhere({ timestamp: { $lte: args.endDate } })
+      .groupBy([
+        'dd.year',
+        'dd.month_number',
+        'dd.day_of_month',
+        'df.fuel_id',
+        'df.region_id',
+        'df.power_id',
+      ])
+      .orderBy([
+        { date: { year: QueryOrder.ASC } },
+        { date: { monthNumber: QueryOrder.ASC } },
+        { date: { dayOfMonth: QueryOrder.ASC } },
+      ]);
+
+    if (args.fuelId) {
+      qb.andWhere({ fuel: args.fuelId });
+    }
+
+    if (args.powerId) {
+      qb.andWhere({ power: args.powerId });
+    }
+
+    if (args.regionId) {
+      qb.andWhere({ region: args.regionId });
+    }
+
+    return qb.execute();
+  }
 }
