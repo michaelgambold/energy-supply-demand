@@ -88,7 +88,7 @@ export class HistoricDataPageComponent implements OnInit, OnDestroy {
       this.regions = regions;
 
       // update selections from query params if we have them
-      this.selectedRegionIndex = Number(paramMap.get('region') || 0);
+      this.selectedRegionIndex = Number(paramMap.get('tab') || 0);
       this.selectedPeriod = paramMap.has('period')
         ? (paramMap.get('period') as HistoricDataPeriod)
         : '1Minute';
@@ -110,7 +110,7 @@ export class HistoricDataPageComponent implements OnInit, OnDestroy {
     this.router.navigate(['./'], {
       relativeTo: this.route,
       queryParams: {
-        region: index,
+        tab: index,
         period: this.selectedPeriod,
         timerange: this.selectedTimeRange,
       },
@@ -121,7 +121,7 @@ export class HistoricDataPageComponent implements OnInit, OnDestroy {
     this.router.navigate(['./'], {
       relativeTo: this.route,
       queryParams: {
-        region: this.selectedRegionIndex,
+        tab: this.selectedRegionIndex,
         period: this.selectedPeriod,
         timerange: value,
       },
@@ -132,7 +132,7 @@ export class HistoricDataPageComponent implements OnInit, OnDestroy {
     this.router.navigate(['./'], {
       relativeTo: this.route,
       queryParams: {
-        region: this.selectedRegionIndex,
+        tab: this.selectedRegionIndex,
         period: value,
         timerange: this.selectedTimeRange,
       },
