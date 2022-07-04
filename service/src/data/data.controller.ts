@@ -68,41 +68,32 @@ export class DataController {
 
     switch (period) {
       case '1Minute':
-        const greenOneMinData = (
-          await this.dataService.findGreenFuelDataRange1MinutePeriod({
+        const oneMinData =
+          await this.dataService.findFuelTypeGroupedDataRange1MinutePeriod({
             startDate,
             endDate,
             regionId,
             powerId,
-          })
-        ).map((x) => {
-          return {
-            fuelId: 1,
-            regionId: x.regionId,
-            powerId: x.powerId,
-            timestamp: x.timestamp,
-            value: x.value,
-          };
-        });
-        return greenOneMinData;
-      // case '5Minutes':
-      //   const fiveMinData =
-      //     await this.dataService.findFuelTypeDataRange5MinutePeriod({
-      //       startDate,
-      //       endDate,
-      //       regionId,
-      //       powerId,
-      //     });
-      //   return this.mapToDto(fuels, powers, regions, fiveMinData);
-      // case '15Minutes':
-      //   const fifteenMinData =
-      //     await this.dataService.findFuelTypeDataRange15MinutePeriod({
-      //       startDate,
-      //       endDate,
-      //       regionId,
-      //       powerId,
-      //     });
-      //   return this.mapToDto(fuels, powers, regions, fifteenMinData);
+          });
+        return this.mapFuelTypeGroupSumToDto(powers, regions, oneMinData);
+      case '5Minutes':
+        const fiveMinData =
+          await this.dataService.findFuelTypeGroupedDataRange5MinutePeriod({
+            startDate,
+            endDate,
+            regionId,
+            powerId,
+          });
+        return this.mapFuelTypeGroupSumToDto(powers, regions, fiveMinData);
+      case '15Minutes':
+        const fifteenMinData =
+          await this.dataService.findFuelTypeGroupedDataRange15MinutePeriod({
+            startDate,
+            endDate,
+            regionId,
+            powerId,
+          });
+        return this.mapFuelTypeGroupSumToDto(powers, regions, fifteenMinData);
       case '1Hour':
         const oneHourData =
           await this.dataService.findFuelTypeGroupedDataRange1HourPeriod({
@@ -112,24 +103,24 @@ export class DataController {
             powerId,
           });
         return this.mapFuelTypeGroupSumToDto(powers, regions, oneHourData);
-      // case '6Hours':
-      //   const sixHourData =
-      //     await this.dataService.findFuelTypeDataRange6HourPeriod({
-      //       startDate,
-      //       endDate,
-      //       regionId,
-      //       powerId,
-      //     });
-      //   return this.mapToDto(fuels, powers, regions, sixHourData);
-      // case '1Day':
-      //   const oneDayData =
-      //     await this.dataService.findFuelTypeDataRange1DayPeriod({
-      //       startDate,
-      //       endDate,
-      //       regionId,
-      //       powerId,
-      //     });
-      //   return this.mapToDto(fuels, powers, regions, oneDayData);
+      case '6Hours':
+        const sixHourData =
+          await this.dataService.findFuelTypeGroupedDataRange6HourPeriod({
+            startDate,
+            endDate,
+            regionId,
+            powerId,
+          });
+        return this.mapFuelTypeGroupSumToDto(powers, regions, sixHourData);
+      case '1Day':
+        const oneDayData =
+          await this.dataService.findFuelTypeGroupedDataRange1DayPeriod({
+            startDate,
+            endDate,
+            regionId,
+            powerId,
+          });
+        return this.mapFuelTypeGroupSumToDto(powers, regions, oneDayData);
       default:
         throw new BadRequestException('Invalid period');
     }
