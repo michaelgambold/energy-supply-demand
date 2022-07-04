@@ -418,7 +418,7 @@ export class DataService {
       greenSum: string | null;
       fossilSum: string | null;
       unknownSum: string | null;
-      allSum: string;
+      sum: string;
     }[]
   > {
     this.logger.log('Find grouped fuel type data range with 1 minute period');
@@ -479,7 +479,7 @@ export class DataService {
         greenQb,
         fossilQb,
         unknownQb,
-        'sum(value) as allSum',
+        'sum(value) as sum',
       ])
       .join('df.date', 'dd')
       .join('df.time', 'td')
@@ -527,7 +527,7 @@ export class DataService {
       greenSum: string | null;
       fossilSum: string | null;
       unknownSum: string | null;
-      allSum: string;
+      sum: string;
     }[]
   > {
     this.logger.log('Find grouped fuel type data range with 5 minute period');
@@ -594,7 +594,7 @@ export class DataService {
         greenQb,
         fossilQb,
         unknownQb,
-        'sum(value) as allSum',
+        'sum(value) as sum',
       ])
       .join('df.date', 'dd')
       .join('df.time', 'td')
@@ -642,7 +642,7 @@ export class DataService {
       greenSum: string | null;
       fossilSum: string | null;
       unknownSum: string | null;
-      allSum: string;
+      sum: string;
     }[]
   > {
     this.logger.log('Find grouped fuel type data range with 15 minute period');
@@ -709,7 +709,7 @@ export class DataService {
         greenQb,
         fossilQb,
         unknownQb,
-        'sum(value) as allSum',
+        'sum(value) as sum',
       ])
       .join('df.date', 'dd')
       .join('df.time', 'td')
@@ -757,7 +757,7 @@ export class DataService {
       greenSum: string | null;
       fossilSum: string | null;
       unknownSum: string | null;
-      allSum: string;
+      sum: string;
     }[]
   > {
     this.logger.log('Find grouped fuel type data range with 1 hour period');
@@ -815,7 +815,7 @@ export class DataService {
         greenQb,
         fossilQb,
         unknownQb,
-        'sum(value) as allSum',
+        'sum(value) as sum',
       ])
       .join('df.date', 'dd')
       .join('df.time', 'td')
@@ -861,7 +861,7 @@ export class DataService {
       greenSum: string | null;
       fossilSum: string | null;
       unknownSum: string | null;
-      allSum: string;
+      sum: string;
     }[]
   > {
     this.logger.log('Find grouped fuel type data range with 6 hour period');
@@ -925,7 +925,7 @@ export class DataService {
         greenQb,
         fossilQb,
         unknownQb,
-        'sum(value) as allSum',
+        'sum(value) as sum',
       ])
       .join('df.date', 'dd')
       .join('df.time', 'td')
@@ -971,7 +971,7 @@ export class DataService {
       greenSum: string | null;
       fossilSum: string | null;
       unknownSum: string | null;
-      allSum: string;
+      sum: string;
     }[]
   > {
     this.logger.log('Find grouped fuel type data range with 1 day period');
@@ -1026,7 +1026,7 @@ export class DataService {
         greenQb,
         fossilQb,
         unknownQb,
-        'sum(value) as allSum',
+        'sum(value) as sum',
       ])
       .join('df.date', 'dd')
       .join('df.time', 'td')

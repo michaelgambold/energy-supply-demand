@@ -231,7 +231,7 @@ export class DataController {
       greenSum: string | null;
       fossilSum: string | null;
       unknownSum: string | null;
-      allSum: string; // cannot be null otherwise there would be no timestamp for this data point
+      sum: string; // cannot be null otherwise there would be no timestamp for this data point
     }[],
   ): DataDto {
     const greenFuel: Partial<FuelDimension> = {
@@ -288,6 +288,11 @@ export class DataController {
 
         dto.recordCount = dto.recordCount + 3;
 
+        const gVal =
+          input.greenSum && input.sum
+            ? (parseInt(input.greenSum) / parseInt(input.sum)) * 100
+            : 0;
+
         // add 3 fuel data points
         dto.data = [
           ...dto.data,
@@ -297,8 +302,8 @@ export class DataController {
             regionId: input.regionId,
             timestamp: input.timestamp,
             value:
-              input.greenSum && input.allSum
-                ? (parseInt(input.greenSum) / parseInt(input.allSum)) * 100
+              input.greenSum && input.sum
+                ? (parseInt(input.greenSum) / parseInt(input.sum)) * 100
                 : 0,
           },
           {
@@ -307,8 +312,8 @@ export class DataController {
             regionId: input.regionId,
             timestamp: input.timestamp,
             value:
-              input.fossilSum && input.allSum
-                ? (parseInt(input.fossilSum) / parseInt(input.allSum)) * 100
+              input.fossilSum && input.sum
+                ? (parseInt(input.fossilSum) / parseInt(input.sum)) * 100
                 : 0,
           },
           {
@@ -317,8 +322,8 @@ export class DataController {
             regionId: input.regionId,
             timestamp: input.timestamp,
             value:
-              input.unknownSum && input.allSum
-                ? (parseInt(input.unknownSum) / parseInt(input.allSum)) * 100
+              input.unknownSum && input.sum
+                ? (parseInt(input.unknownSum) / parseInt(input.sum)) * 100
                 : 0,
           },
         ];
