@@ -64,10 +64,10 @@
     </div>
     <div class="mb-4">
       <app-line-chart
-        *ngIf="generationData$ | async as data; else spinner"
+        *ngIf="fuelTypeGenerationData$ | async as data; else spinner"
         [title]="'Generation (Green vs Fossil)'"
-        [series]="greenFossilLineSeries"
-        [data]="data | dataToGreenFossilLineDataPoints"
+        [series]="data.metadata.fuels | fuelsToLineSeries"
+        [data]="data.data | dataToLineDataPoints: 'fuel'"
       ></app-line-chart>
     </div>
     <div class="mb-4">
