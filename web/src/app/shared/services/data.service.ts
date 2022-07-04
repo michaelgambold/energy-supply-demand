@@ -27,6 +27,29 @@ export type HistoricDataPeriod =
 export class DataService {
   constructor(private readonly http: HttpClient) {}
 
+  getFuelTypeHistoricData(args: {
+    timeRange: HistoricDataTimeRange;
+    period: HistoricDataPeriod;
+    powerId?: number;
+    regionId?: number;
+  }): Observable<Data> {
+    const urlParams = new URLSearchParams();
+
+    if (args.powerId) {
+      urlParams.append('power', args.powerId.toString());
+    }
+
+    if (args.regionId) {
+      urlParams.append('region', args.regionId.toString());
+    }
+
+    return this.http.get<Data>(
+      `/api/v1/data/groupby/fueltype/timerange/${args.timeRange}/period/${
+        args.period
+      }?${urlParams.toString()}`
+    );
+  }
+
   getHistoricData(args: {
     timeRange: HistoricDataTimeRange;
     period: HistoricDataPeriod;

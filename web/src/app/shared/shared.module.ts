@@ -13,7 +13,6 @@ import { StackedBarChartComponent } from './components/stacked-bar-chart/stacked
 import { RegionsToStackedBarCategoriesPipe } from './pipes/regions-to-stacked-bar-categories';
 import { FuelsToStackedBarSeriesPipe } from './pipes/fuels-to-stacked-bar-series.pipe';
 import { DataToStackedBarDataPointsPipe } from './pipes/data-to-stacked-bar-data-points.pipe';
-import { DataToGreenFossilLineDataPointsPipe } from './pipes/data-to-green-fossil-line-data-points.pipe';
 
 @NgModule({
   declarations: [
@@ -25,7 +24,6 @@ import { DataToGreenFossilLineDataPointsPipe } from './pipes/data-to-green-fossi
     RegionsToStackedBarCategoriesPipe,
     FuelsToStackedBarSeriesPipe,
     DataToStackedBarDataPointsPipe,
-    DataToGreenFossilLineDataPointsPipe,
   ],
   imports: [
     CommonModule,
@@ -44,7 +42,6 @@ import { DataToGreenFossilLineDataPointsPipe } from './pipes/data-to-green-fossi
     RegionsToStackedBarCategoriesPipe,
     DataToStackedBarDataPointsPipe,
     FuelsToStackedBarSeriesPipe,
-    DataToGreenFossilLineDataPointsPipe,
   ],
 })
 export class SharedModule {}

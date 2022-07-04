@@ -22,6 +22,7 @@ import { RegionService } from '../../shared/services/region.service';
 export class HistoricDataPageComponent implements OnInit, OnDestroy {
   demandData$!: Observable<Data>;
   generationData$!: Observable<Data>;
+  fuelTypeGenerationData$!: Observable<Data>;
 
   selectedRegion?: Region;
 
@@ -141,6 +142,15 @@ export class HistoricDataPageComponent implements OnInit, OnDestroy {
   private refreshData() {
     this.generationData$ = this.dataService
       .getHistoricData({
+        period: this.selectedPeriod,
+        timeRange: this.selectedTimeRange,
+        regionId: this.regions[this.selectedRegionIndex].id,
+        powerId: this.power.find((x) => x.type === 'generation')?.id,
+      })
+      .pipe(shareReplay()); // hack to stop multiple requests
+
+    this.fuelTypeGenerationData$ = this.dataService
+      .getFuelTypeHistoricData({
         period: this.selectedPeriod,
         timeRange: this.selectedTimeRange,
         regionId: this.regions[this.selectedRegionIndex].id,
