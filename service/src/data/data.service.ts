@@ -470,6 +470,20 @@ export class DataService {
       .andWhere({ 'std.minute': { $eq: knex.ref('td.minute') } })
       .as('unknownSum');
 
+    const allQb = this.dataFactRepository
+      .qb('all')
+      .select(['sum(value)'])
+      .join('all.date', 'sdd')
+      .join('all.time', 'std')
+      .where({ 'all.region_id': { $eq: knex.ref('df.region_id') } })
+      .andWhere({ 'all.power_id': { $eq: knex.ref('df.power_id') } })
+      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
+      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
+      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
+      .andWhere({ 'std.minute': { $eq: knex.ref('td.minute') } })
+      .as('sum');
+
     const qb = this.dataFactRepository
       .qb('df')
       .select([
@@ -479,7 +493,7 @@ export class DataService {
         greenQb,
         fossilQb,
         unknownQb,
-        'sum(value) as sum',
+        allQb,
       ])
       .join('df.date', 'dd')
       .join('df.time', 'td')
@@ -585,6 +599,22 @@ export class DataService {
       })
       .as('unknownSum');
 
+    const allQb = this.dataFactRepository
+      .qb('all')
+      .select(['sum(value)'])
+      .join('all.date', 'sdd')
+      .join('all.time', 'std')
+      .where({ 'all.region_id': { $eq: knex.ref('df.region_id') } })
+      .andWhere({ 'all.power_id': { $eq: knex.ref('df.power_id') } })
+      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
+      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
+      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
+      .andWhere({
+        'std.twelfth_of_hour': { $eq: knex.ref('td.twelfth_of_hour') },
+      })
+      .as('sum');
+
     const qb = this.dataFactRepository
       .qb('df')
       .select([
@@ -594,7 +624,7 @@ export class DataService {
         greenQb,
         fossilQb,
         unknownQb,
-        'sum(value) as sum',
+        allQb,
       ])
       .join('df.date', 'dd')
       .join('df.time', 'td')
@@ -700,6 +730,22 @@ export class DataService {
       })
       .as('unknownSum');
 
+    const allQb = this.dataFactRepository
+      .qb('all')
+      .select(['sum(value)'])
+      .join('all.date', 'sdd')
+      .join('all.time', 'std')
+      .where({ 'all.region_id': { $eq: knex.ref('df.region_id') } })
+      .andWhere({ 'all.power_id': { $eq: knex.ref('df.power_id') } })
+      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
+      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
+      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
+      .andWhere({
+        'std.quarter_of_hour': { $eq: knex.ref('td.quarter_of_hour') },
+      })
+      .as('sum');
+
     const qb = this.dataFactRepository
       .qb('df')
       .select([
@@ -709,7 +755,7 @@ export class DataService {
         greenQb,
         fossilQb,
         unknownQb,
-        'sum(value) as sum',
+        allQb,
       ])
       .join('df.date', 'dd')
       .join('df.time', 'td')
@@ -806,6 +852,19 @@ export class DataService {
       .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
       .as('unknownSum');
 
+    const allQb = this.dataFactRepository
+      .qb('all')
+      .select(['sum(value)'])
+      .join('all.date', 'sdd')
+      .join('all.time', 'std')
+      .where({ 'all.region_id': { $eq: knex.ref('df.region_id') } })
+      .andWhere({ 'all.power_id': { $eq: knex.ref('df.power_id') } })
+      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
+      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
+      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
+      .as('sum');
+
     const qb = this.dataFactRepository
       .qb('df')
       .select([
@@ -815,7 +874,7 @@ export class DataService {
         greenQb,
         fossilQb,
         unknownQb,
-        'sum(value) as sum',
+        allQb,
       ])
       .join('df.date', 'dd')
       .join('df.time', 'td')
@@ -916,6 +975,21 @@ export class DataService {
       })
       .as('unknownSum');
 
+    const allQb = this.dataFactRepository
+      .qb('all')
+      .select(['sum(value)'])
+      .join('all.date', 'sdd')
+      .join('all.time', 'std')
+      .where({ 'all.region_id': { $eq: knex.ref('df.region_id') } })
+      .andWhere({ 'all.power_id': { $eq: knex.ref('df.power_id') } })
+      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
+      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
+      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({
+        'std.quarter_of_day': { $eq: knex.ref('td.quarter_of_day') },
+      })
+      .as('sum');
+
     const qb = this.dataFactRepository
       .qb('df')
       .select([
@@ -925,7 +999,7 @@ export class DataService {
         greenQb,
         fossilQb,
         unknownQb,
-        'sum(value) as sum',
+        allQb,
       ])
       .join('df.date', 'dd')
       .join('df.time', 'td')
@@ -1017,6 +1091,18 @@ export class DataService {
       .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
       .as('unknownSum');
 
+    const allQb = this.dataFactRepository
+      .qb('all')
+      .select(['sum(value)'])
+      .join('all.date', 'sdd')
+      .join('all.time', 'std')
+      .where({ 'all.region_id': { $eq: knex.ref('df.region_id') } })
+      .andWhere({ 'all.power_id': { $eq: knex.ref('df.power_id') } })
+      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
+      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
+      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .as('sum');
+
     const qb = this.dataFactRepository
       .qb('df')
       .select([
@@ -1026,7 +1112,7 @@ export class DataService {
         greenQb,
         fossilQb,
         unknownQb,
-        'sum(value) as sum',
+        allQb,
       ])
       .join('df.date', 'dd')
       .join('df.time', 'td')
