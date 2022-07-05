@@ -428,14 +428,11 @@ export class DataService {
     const greenQb = this.dataFactRepository
       .qb('green')
       .select(['sum(value)'])
-      .join('green.date', 'sdd')
       .join('green.time', 'std')
       .where({ fuel: { type: { $eq: 'green' } } })
       .andWhere({ 'green.region_id': { $eq: knex.ref('df.region_id') } })
       .andWhere({ 'green.power_id': { $eq: knex.ref('df.power_id') } })
-      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
-      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
-      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'green.date_id': { $eq: knex.ref('df.date_id') } })
       .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
       .andWhere({ 'std.minute': { $eq: knex.ref('td.minute') } })
       .as('greenSum');
@@ -443,14 +440,11 @@ export class DataService {
     const fossilQb = this.dataFactRepository
       .qb('fossil')
       .select(['sum(value)'])
-      .join('fossil.date', 'sdd')
       .join('fossil.time', 'std')
       .where({ fuel: { type: { $eq: 'fossil' } } })
       .andWhere({ 'fossil.region_id': { $eq: knex.ref('df.region_id') } })
       .andWhere({ 'fossil.power_id': { $eq: knex.ref('df.power_id') } })
-      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
-      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
-      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'fossil.date_id': { $eq: knex.ref('df.date_id') } })
       .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
       .andWhere({ 'std.minute': { $eq: knex.ref('td.minute') } })
       .as('fossilSum');
@@ -458,14 +452,11 @@ export class DataService {
     const unknownQb = this.dataFactRepository
       .qb('unknown')
       .select(['sum(value)'])
-      .join('unknown.date', 'sdd')
       .join('unknown.time', 'std')
       .where({ fuel: { type: { $eq: 'unknown' } } })
       .andWhere({ 'unknown.region_id': { $eq: knex.ref('df.region_id') } })
       .andWhere({ 'unknown.power_id': { $eq: knex.ref('df.power_id') } })
-      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
-      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
-      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'unknown.date_id': { $eq: knex.ref('df.date_id') } })
       .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
       .andWhere({ 'std.minute': { $eq: knex.ref('td.minute') } })
       .as('unknownSum');
@@ -473,13 +464,10 @@ export class DataService {
     const allQb = this.dataFactRepository
       .qb('all')
       .select(['sum(value)'])
-      .join('all.date', 'sdd')
       .join('all.time', 'std')
       .where({ 'all.region_id': { $eq: knex.ref('df.region_id') } })
       .andWhere({ 'all.power_id': { $eq: knex.ref('df.power_id') } })
-      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
-      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
-      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'all.date_id': { $eq: knex.ref('df.date_id') } })
       .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
       .andWhere({ 'std.minute': { $eq: knex.ref('td.minute') } })
       .as('sum');
@@ -495,26 +483,17 @@ export class DataService {
         unknownQb,
         allQb,
       ])
-      .join('df.date', 'dd')
       .join('df.time', 'td')
       .where({ timestamp: { $gte: args.startDate } })
       .andWhere({ timestamp: { $lte: args.endDate } })
       .groupBy([
-        'dd.year',
-        'dd.month_number',
-        'dd.day_of_month',
+        'df.date_id',
         'td.hour',
         'td.minute',
         'df.region_id',
         'df.power_id',
       ])
-      .orderBy([
-        { date: { year: QueryOrder.ASC } },
-        { date: { monthNumber: QueryOrder.ASC } },
-        { date: { dayOfMonth: QueryOrder.ASC } },
-        { time: { hour: QueryOrder.ASC } },
-        { time: { minute: QueryOrder.ASC } },
-      ]);
+      .orderBy([{ 'min(timestamp)': QueryOrder.ASC }]);
 
     if (args.powerId) {
       qb.andWhere({ power: args.powerId });
@@ -551,14 +530,11 @@ export class DataService {
     const greenQb = this.dataFactRepository
       .qb('green')
       .select(['sum(value)'])
-      .join('green.date', 'sdd')
       .join('green.time', 'std')
       .where({ fuel: { type: { $eq: 'green' } } })
       .andWhere({ 'green.region_id': { $eq: knex.ref('df.region_id') } })
       .andWhere({ 'green.power_id': { $eq: knex.ref('df.power_id') } })
-      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
-      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
-      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'green.date_id': { $eq: knex.ref('df.date_id') } })
       .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
       .andWhere({
         'std.twelfth_of_hour': { $eq: knex.ref('td.twelfth_of_hour') },
@@ -568,14 +544,11 @@ export class DataService {
     const fossilQb = this.dataFactRepository
       .qb('fossil')
       .select(['sum(value)'])
-      .join('fossil.date', 'sdd')
       .join('fossil.time', 'std')
       .where({ fuel: { type: { $eq: 'fossil' } } })
       .andWhere({ 'fossil.region_id': { $eq: knex.ref('df.region_id') } })
       .andWhere({ 'fossil.power_id': { $eq: knex.ref('df.power_id') } })
-      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
-      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
-      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'fossil.date_id': { $eq: knex.ref('df.date_id') } })
       .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
       .andWhere({
         'std.twelfth_of_hour': { $eq: knex.ref('td.twelfth_of_hour') },
@@ -585,14 +558,11 @@ export class DataService {
     const unknownQb = this.dataFactRepository
       .qb('unknown')
       .select(['sum(value)'])
-      .join('unknown.date', 'sdd')
       .join('unknown.time', 'std')
       .where({ fuel: { type: { $eq: 'unknown' } } })
       .andWhere({ 'unknown.region_id': { $eq: knex.ref('df.region_id') } })
       .andWhere({ 'unknown.power_id': { $eq: knex.ref('df.power_id') } })
-      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
-      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
-      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'unknown.date_id': { $eq: knex.ref('df.date_id') } })
       .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
       .andWhere({
         'std.twelfth_of_hour': { $eq: knex.ref('td.twelfth_of_hour') },
@@ -602,13 +572,10 @@ export class DataService {
     const allQb = this.dataFactRepository
       .qb('all')
       .select(['sum(value)'])
-      .join('all.date', 'sdd')
       .join('all.time', 'std')
       .where({ 'all.region_id': { $eq: knex.ref('df.region_id') } })
       .andWhere({ 'all.power_id': { $eq: knex.ref('df.power_id') } })
-      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
-      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
-      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'all.date_id': { $eq: knex.ref('df.date_id') } })
       .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
       .andWhere({
         'std.twelfth_of_hour': { $eq: knex.ref('td.twelfth_of_hour') },
@@ -626,26 +593,17 @@ export class DataService {
         unknownQb,
         allQb,
       ])
-      .join('df.date', 'dd')
       .join('df.time', 'td')
       .where({ timestamp: { $gte: args.startDate } })
       .andWhere({ timestamp: { $lte: args.endDate } })
       .groupBy([
-        'dd.year',
-        'dd.month_number',
-        'dd.day_of_month',
+        'df.date_id',
         'td.hour',
         'td.twelfth_of_hour',
         'df.region_id',
         'df.power_id',
       ])
-      .orderBy([
-        { date: { year: QueryOrder.ASC } },
-        { date: { monthNumber: QueryOrder.ASC } },
-        { date: { dayOfMonth: QueryOrder.ASC } },
-        { time: { hour: QueryOrder.ASC } },
-        { time: { twelfthOfHour: QueryOrder.ASC } },
-      ]);
+      .orderBy([{ 'min(timestamp)': QueryOrder.ASC }]);
 
     if (args.powerId) {
       qb.andWhere({ power: args.powerId });
@@ -682,14 +640,11 @@ export class DataService {
     const greenQb = this.dataFactRepository
       .qb('green')
       .select(['sum(value)'])
-      .join('green.date', 'sdd')
       .join('green.time', 'std')
       .where({ fuel: { type: { $eq: 'green' } } })
       .andWhere({ 'green.region_id': { $eq: knex.ref('df.region_id') } })
       .andWhere({ 'green.power_id': { $eq: knex.ref('df.power_id') } })
-      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
-      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
-      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'green.date_id': { $eq: knex.ref('df.date_id') } })
       .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
       .andWhere({
         'std.quarter_of_hour': { $eq: knex.ref('td.quarter_of_hour') },
@@ -699,14 +654,11 @@ export class DataService {
     const fossilQb = this.dataFactRepository
       .qb('fossil')
       .select(['sum(value)'])
-      .join('fossil.date', 'sdd')
       .join('fossil.time', 'std')
       .where({ fuel: { type: { $eq: 'fossil' } } })
       .andWhere({ 'fossil.region_id': { $eq: knex.ref('df.region_id') } })
       .andWhere({ 'fossil.power_id': { $eq: knex.ref('df.power_id') } })
-      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
-      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
-      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'fossil.date_id': { $eq: knex.ref('df.date_id') } })
       .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
       .andWhere({
         'std.quarter_of_hour': { $eq: knex.ref('td.quarter_of_hour') },
@@ -716,14 +668,11 @@ export class DataService {
     const unknownQb = this.dataFactRepository
       .qb('unknown')
       .select(['sum(value)'])
-      .join('unknown.date', 'sdd')
       .join('unknown.time', 'std')
       .where({ fuel: { type: { $eq: 'unknown' } } })
       .andWhere({ 'unknown.region_id': { $eq: knex.ref('df.region_id') } })
       .andWhere({ 'unknown.power_id': { $eq: knex.ref('df.power_id') } })
-      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
-      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
-      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'unknown.date_id': { $eq: knex.ref('df.date_id') } })
       .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
       .andWhere({
         'std.quarter_of_hour': { $eq: knex.ref('td.quarter_of_hour') },
@@ -733,13 +682,10 @@ export class DataService {
     const allQb = this.dataFactRepository
       .qb('all')
       .select(['sum(value)'])
-      .join('all.date', 'sdd')
       .join('all.time', 'std')
       .where({ 'all.region_id': { $eq: knex.ref('df.region_id') } })
       .andWhere({ 'all.power_id': { $eq: knex.ref('df.power_id') } })
-      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
-      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
-      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'all.date_id': { $eq: knex.ref('df.date_id') } })
       .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
       .andWhere({
         'std.quarter_of_hour': { $eq: knex.ref('td.quarter_of_hour') },
@@ -757,26 +703,17 @@ export class DataService {
         unknownQb,
         allQb,
       ])
-      .join('df.date', 'dd')
       .join('df.time', 'td')
       .where({ timestamp: { $gte: args.startDate } })
       .andWhere({ timestamp: { $lte: args.endDate } })
       .groupBy([
-        'dd.year',
-        'dd.month_number',
-        'dd.day_of_month',
+        'df.date_id',
         'td.hour',
         'td.quarter_of_hour',
         'df.region_id',
         'df.power_id',
       ])
-      .orderBy([
-        { date: { year: QueryOrder.ASC } },
-        { date: { monthNumber: QueryOrder.ASC } },
-        { date: { dayOfMonth: QueryOrder.ASC } },
-        { time: { hour: QueryOrder.ASC } },
-        { time: { quarterOfHour: QueryOrder.ASC } },
-      ]);
+      .orderBy([{ 'min(timestamp)': QueryOrder.ASC }]);
 
     if (args.powerId) {
       qb.andWhere({ power: args.powerId });
@@ -813,55 +750,43 @@ export class DataService {
     const greenQb = this.dataFactRepository
       .qb('green')
       .select(['sum(value)'])
-      .join('green.date', 'sdd')
       .join('green.time', 'std')
       .where({ fuel: { type: { $eq: 'green' } } })
       .andWhere({ 'green.region_id': { $eq: knex.ref('df.region_id') } })
       .andWhere({ 'green.power_id': { $eq: knex.ref('df.power_id') } })
-      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
-      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
-      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'green.date_id': { $eq: knex.ref('df.date_id') } })
       .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
       .as('greenSum');
 
     const fossilQb = this.dataFactRepository
       .qb('fossil')
       .select(['sum(value)'])
-      .join('fossil.date', 'sdd')
       .join('fossil.time', 'std')
       .where({ fuel: { type: { $eq: 'fossil' } } })
       .andWhere({ 'fossil.region_id': { $eq: knex.ref('df.region_id') } })
       .andWhere({ 'fossil.power_id': { $eq: knex.ref('df.power_id') } })
-      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
-      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
-      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'fossil.date_id': { $eq: knex.ref('df.date_id') } })
       .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
       .as('fossilSum');
 
     const unknownQb = this.dataFactRepository
       .qb('unknown')
       .select(['sum(value)'])
-      .join('unknown.date', 'sdd')
       .join('unknown.time', 'std')
       .where({ fuel: { type: { $eq: 'unknown' } } })
       .andWhere({ 'unknown.region_id': { $eq: knex.ref('df.region_id') } })
       .andWhere({ 'unknown.power_id': { $eq: knex.ref('df.power_id') } })
-      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
-      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
-      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'unknown.date_id': { $eq: knex.ref('df.date_id') } })
       .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
       .as('unknownSum');
 
     const allQb = this.dataFactRepository
       .qb('all')
       .select(['sum(value)'])
-      .join('all.date', 'sdd')
       .join('all.time', 'std')
       .where({ 'all.region_id': { $eq: knex.ref('df.region_id') } })
       .andWhere({ 'all.power_id': { $eq: knex.ref('df.power_id') } })
-      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
-      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
-      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'all.date_id': { $eq: knex.ref('df.date_id') } })
       .andWhere({ 'std.hour': { $eq: knex.ref('td.hour') } })
       .as('sum');
 
@@ -876,24 +801,11 @@ export class DataService {
         unknownQb,
         allQb,
       ])
-      .join('df.date', 'dd')
       .join('df.time', 'td')
       .where({ timestamp: { $gte: args.startDate } })
       .andWhere({ timestamp: { $lte: args.endDate } })
-      .groupBy([
-        'dd.year',
-        'dd.month_number',
-        'dd.day_of_month',
-        'td.hour',
-        'df.region_id',
-        'df.power_id',
-      ])
-      .orderBy([
-        { date: { year: QueryOrder.ASC } },
-        { date: { monthNumber: QueryOrder.ASC } },
-        { date: { dayOfMonth: QueryOrder.ASC } },
-        { time: { hour: QueryOrder.ASC } },
-      ]);
+      .groupBy(['df.date_id', 'td.hour', 'df.region_id', 'df.power_id'])
+      .orderBy([{ 'min(timestamp)': QueryOrder.ASC }]);
 
     if (args.powerId) {
       qb.andWhere({ power: args.powerId });
@@ -930,14 +842,11 @@ export class DataService {
     const greenQb = this.dataFactRepository
       .qb('green')
       .select(['sum(value)'])
-      .join('green.date', 'sdd')
       .join('green.time', 'std')
       .where({ fuel: { type: { $eq: 'green' } } })
       .andWhere({ 'green.region_id': { $eq: knex.ref('df.region_id') } })
       .andWhere({ 'green.power_id': { $eq: knex.ref('df.power_id') } })
-      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
-      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
-      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'green.date_id': { $eq: knex.ref('df.date_id') } })
       .andWhere({
         'std.quarter_of_day': { $eq: knex.ref('td.quarter_of_day') },
       })
@@ -946,14 +855,11 @@ export class DataService {
     const fossilQb = this.dataFactRepository
       .qb('fossil')
       .select(['sum(value)'])
-      .join('fossil.date', 'sdd')
       .join('fossil.time', 'std')
       .where({ fuel: { type: { $eq: 'fossil' } } })
       .andWhere({ 'fossil.region_id': { $eq: knex.ref('df.region_id') } })
       .andWhere({ 'fossil.power_id': { $eq: knex.ref('df.power_id') } })
-      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
-      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
-      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'fossil.date_id': { $eq: knex.ref('df.date_id') } })
       .andWhere({
         'std.quarter_of_day': { $eq: knex.ref('td.quarter_of_day') },
       })
@@ -962,14 +868,11 @@ export class DataService {
     const unknownQb = this.dataFactRepository
       .qb('unknown')
       .select(['sum(value)'])
-      .join('unknown.date', 'sdd')
       .join('unknown.time', 'std')
       .where({ fuel: { type: { $eq: 'unknown' } } })
       .andWhere({ 'unknown.region_id': { $eq: knex.ref('df.region_id') } })
       .andWhere({ 'unknown.power_id': { $eq: knex.ref('df.power_id') } })
-      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
-      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
-      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'unknown.date_id': { $eq: knex.ref('df.date_id') } })
       .andWhere({
         'std.quarter_of_day': { $eq: knex.ref('td.quarter_of_day') },
       })
@@ -978,13 +881,10 @@ export class DataService {
     const allQb = this.dataFactRepository
       .qb('all')
       .select(['sum(value)'])
-      .join('all.date', 'sdd')
       .join('all.time', 'std')
       .where({ 'all.region_id': { $eq: knex.ref('df.region_id') } })
       .andWhere({ 'all.power_id': { $eq: knex.ref('df.power_id') } })
-      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
-      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
-      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'all.date_id': { $eq: knex.ref('df.date_id') } })
       .andWhere({
         'std.quarter_of_day': { $eq: knex.ref('td.quarter_of_day') },
       })
@@ -1001,24 +901,16 @@ export class DataService {
         unknownQb,
         allQb,
       ])
-      .join('df.date', 'dd')
       .join('df.time', 'td')
       .where({ timestamp: { $gte: args.startDate } })
       .andWhere({ timestamp: { $lte: args.endDate } })
       .groupBy([
-        'dd.year',
-        'dd.month_number',
-        'dd.day_of_month',
+        'df.date_id',
         'td.quarter_of_day',
         'df.region_id',
         'df.power_id',
       ])
-      .orderBy([
-        { date: { year: QueryOrder.ASC } },
-        { date: { monthNumber: QueryOrder.ASC } },
-        { date: { dayOfMonth: QueryOrder.ASC } },
-        { time: { quarterOfDay: QueryOrder.ASC } },
-      ]);
+      .orderBy([{ 'min(timestamp)': QueryOrder.ASC }]);
 
     if (args.powerId) {
       qb.andWhere({ power: args.powerId });
@@ -1055,52 +947,36 @@ export class DataService {
     const greenQb = this.dataFactRepository
       .qb('green')
       .select(['sum(value)'])
-      .join('green.date', 'sdd')
-      .join('green.time', 'std')
       .where({ fuel: { type: { $eq: 'green' } } })
       .andWhere({ 'green.region_id': { $eq: knex.ref('df.region_id') } })
       .andWhere({ 'green.power_id': { $eq: knex.ref('df.power_id') } })
-      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
-      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
-      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'green.date_id': { $eq: knex.ref('df.date_id') } })
       .as('greenSum');
 
     const fossilQb = this.dataFactRepository
       .qb('fossil')
       .select(['sum(value)'])
-      .join('fossil.date', 'sdd')
-      .join('fossil.time', 'std')
       .where({ fuel: { type: { $eq: 'fossil' } } })
       .andWhere({ 'fossil.region_id': { $eq: knex.ref('df.region_id') } })
       .andWhere({ 'fossil.power_id': { $eq: knex.ref('df.power_id') } })
-      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
-      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
-      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'fossil.date_id': { $eq: knex.ref('df.date_id') } })
       .as('fossilSum');
 
     const unknownQb = this.dataFactRepository
       .qb('unknown')
       .select(['sum(value)'])
-      .join('unknown.date', 'sdd')
-      .join('unknown.time', 'std')
       .where({ fuel: { type: { $eq: 'unknown' } } })
       .andWhere({ 'unknown.region_id': { $eq: knex.ref('df.region_id') } })
       .andWhere({ 'unknown.power_id': { $eq: knex.ref('df.power_id') } })
-      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
-      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
-      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'unknown.date_id': { $eq: knex.ref('df.date_id') } })
       .as('unknownSum');
 
     const allQb = this.dataFactRepository
       .qb('all')
       .select(['sum(value)'])
-      .join('all.date', 'sdd')
-      .join('all.time', 'std')
       .where({ 'all.region_id': { $eq: knex.ref('df.region_id') } })
       .andWhere({ 'all.power_id': { $eq: knex.ref('df.power_id') } })
-      .andWhere({ 'sdd.year': { $eq: knex.ref('dd.year') } })
-      .andWhere({ 'sdd.month_number': { $eq: knex.ref('dd.month_number') } })
-      .andWhere({ 'sdd.day_of_month': { $eq: knex.ref('dd.day_of_month') } })
+      .andWhere({ 'all.date_id': { $eq: knex.ref('df.date_id') } })
       .as('sum');
 
     const qb = this.dataFactRepository
@@ -1114,22 +990,10 @@ export class DataService {
         unknownQb,
         allQb,
       ])
-      .join('df.date', 'dd')
-      .join('df.time', 'td')
       .where({ timestamp: { $gte: args.startDate } })
       .andWhere({ timestamp: { $lte: args.endDate } })
-      .groupBy([
-        'dd.year',
-        'dd.month_number',
-        'dd.day_of_month',
-        'df.region_id',
-        'df.power_id',
-      ])
-      .orderBy([
-        { date: { year: QueryOrder.ASC } },
-        { date: { monthNumber: QueryOrder.ASC } },
-        { date: { dayOfMonth: QueryOrder.ASC } },
-      ]);
+      .groupBy(['df.date_id', 'df.region_id', 'df.power_id'])
+      .orderBy([{ 'min(timestamp)': QueryOrder.ASC }]);
 
     if (args.powerId) {
       qb.andWhere({ power: args.powerId });
