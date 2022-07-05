@@ -83,6 +83,44 @@
       "schema": "public",
       "indexes": [
         {
+          "columnNames": [
+            "quarter_of_day"
+          ],
+          "composite": false,
+          "keyName": "time_dimension_quarter_of_day_idx",
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "hour"
+          ],
+          "composite": false,
+          "keyName": "time_dimension_hour_idx",
+          "primary": false,
+          "unique": false
+        },
+        {
+          "keyName": "time_dimension_hour_quarter_of_hour_idx",
+          "columnNames": [
+            "hour",
+            "quarter_of_hour"
+          ],
+          "composite": true,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "keyName": "time_dimension_hour_minute_idx",
+          "columnNames": [
+            "hour",
+            "minute"
+          ],
+          "composite": true,
+          "primary": false,
+          "unique": false
+        },
+        {
           "keyName": "time_dimension_pkey",
           "columnNames": [
             "id"
@@ -357,6 +395,17 @@
       "schema": "public",
       "indexes": [
         {
+          "keyName": "date_dimension_year_month_day_idx",
+          "columnNames": [
+            "year",
+            "month_number",
+            "day_of_month"
+          ],
+          "composite": true,
+          "primary": false,
+          "unique": false
+        },
+        {
           "keyName": "date_dimension_pkey",
           "columnNames": [
             "id"
@@ -453,7 +502,7 @@
             "timestamp"
           ],
           "composite": false,
-          "keyName": "timestamp_index",
+          "keyName": "data_fact_timestamp_idx",
           "primary": false,
           "unique": false
         },
@@ -462,7 +511,7 @@
             "fuel_id"
           ],
           "composite": false,
-          "keyName": "fuel_index",
+          "keyName": "data_fact_fuel_idx",
           "primary": false,
           "unique": false
         },
@@ -471,7 +520,7 @@
             "region_id"
           ],
           "composite": false,
-          "keyName": "region_index",
+          "keyName": "data_fact_region_idx",
           "primary": false,
           "unique": false
         },
@@ -480,7 +529,7 @@
             "power_id"
           ],
           "composite": false,
-          "keyName": "power_index",
+          "keyName": "data_fact_power_idx",
           "primary": false,
           "unique": false
         },
@@ -489,7 +538,7 @@
             "date_id"
           ],
           "composite": false,
-          "keyName": "date_index",
+          "keyName": "data_fact_date_idx",
           "primary": false,
           "unique": false
         },
@@ -498,7 +547,30 @@
             "time_id"
           ],
           "composite": false,
-          "keyName": "time_index",
+          "keyName": "data_fact_time_idx",
+          "primary": false,
+          "unique": false
+        },
+        {
+          "keyName": "data_fact_date_time_idx",
+          "columnNames": [
+            "date_id",
+            "time_id"
+          ],
+          "composite": true,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "keyName": "data_fact_dimensions_idx",
+          "columnNames": [
+            "fuel_id",
+            "region_id",
+            "power_id",
+            "date_id",
+            "time_id"
+          ],
+          "composite": true,
           "primary": false,
           "unique": false
         },

@@ -10,6 +10,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "migration:create": "npx mikro-orm migration:create",
+    "migration:down": "npx mikro-orm migration:down",
     "migration:up": "npx mikro-orm migration:up",
     "seeder:run": "npx mikro-orm seeder:run",
     "start": "nest start",
