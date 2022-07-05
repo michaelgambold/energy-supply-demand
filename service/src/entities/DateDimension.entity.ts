@@ -1,5 +1,9 @@
-import { Entity, PrimaryKey, Property, types } from '@mikro-orm/core';
+import { Entity, Index, PrimaryKey, Property, types } from '@mikro-orm/core';
 
+@Index({
+  name: 'date_dimension_year_month_day_idx',
+  properties: ['year', 'monthNumber', 'dayOfMonth'],
+})
 @Entity()
 export class DateDimension {
   @PrimaryKey()

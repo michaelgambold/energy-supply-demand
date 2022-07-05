@@ -13,35 +13,43 @@ import { PowerDimension } from './PowerDimension.entity';
 import { RegionDimension } from './RegionDimension.entity';
 import { TimeDimension } from './TimeDimension.entity';
 
+@Index({
+  name: 'data_fact_dimensions_idx',
+  properties: ['fuel', 'region', 'power', 'date', 'time'],
+})
+@Index({
+  name: 'data_fact_date_time_idx',
+  properties: ['date', 'time'],
+})
 @Entity()
 export class DataFact {
   @PrimaryKey()
   uuid = v4();
 
-  @Index({ name: 'timestamp_index' })
+  @Index({ name: 'data_fact_timestamp_idx' })
   @Property()
   timestamp: Date;
 
   @Property()
   value: number;
 
-  @Index({ name: 'fuel_index' })
+  @Index({ name: 'data_fact_fuel_idx' })
   @ManyToOne()
   fuel!: FuelDimension;
 
-  @Index({ name: 'region_index' })
+  @Index({ name: 'data_fact_region_idx' })
   @ManyToOne()
   region!: RegionDimension;
 
-  @Index({ name: 'power_index' })
+  @Index({ name: 'data_fact_power_idx' })
   @ManyToOne()
   power!: PowerDimension;
 
-  @Index({ name: 'date_index' })
+  @Index({ name: 'data_fact_date_idx' })
   @ManyToOne()
   date!: DateDimension;
 
-  @Index({ name: 'time_index' })
+  @Index({ name: 'data_fact_time_idx' })
   @ManyToOne()
   time!: TimeDimension;
 }
