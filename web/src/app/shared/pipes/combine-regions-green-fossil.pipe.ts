@@ -6,7 +6,10 @@ import { Data, DataPoint } from '../models/data';
 })
 export class CombineRegionsGreenFossilPipe implements PipeTransform {
   transform(value: Data, ...args: unknown[]): Data {
-    const dataPointMap = new Map<string, DataPoint[]>();
+    const valuesMap = new Map<
+      string,
+      { fossil: number; green: number; unknown: number; sum: number }
+    >();
 
     const greenFuel = value.metadata.fuels.find((x) => x.ref === 'green');
     const fossilFuel = value.metadata.fuels.find((x) => x.ref === 'fossil');
@@ -17,82 +20,87 @@ export class CombineRegionsGreenFossilPipe implements PipeTransform {
 
     for (const dataPoint of value.data) {
       const key = `${dataPoint.timestamp}_${dataPoint.powerId}`;
+      let record = valuesMap.get(key);
 
-      if (dataPointMap.has(key)) continue;
+      if (!record) {
+        record = {
+          fossil: 0,
+          green: 0,
+          sum: 0,
+          unknown: 0,
+        };
+      }
 
-      const greenDataPoints = value.data.filter(
-        (x) =>
-          x.timestamp === dataPoint.timestamp &&
-          x.powerId === dataPoint.powerId &&
-          x.fuelId === greenFuel.id
-      );
-      const fossilDataPoints = value.data.filter(
-        (x) =>
-          x.timestamp === dataPoint.timestamp &&
-          x.powerId === dataPoint.powerId &&
-          x.fuelId === fossilFuel.id
-      );
-      const unknownDataPoints = value.data.filter(
-        (x) =>
-          x.timestamp === dataPoint.timestamp &&
-          x.powerId === dataPoint.powerId &&
-          x.fuelId === unknownFuel.id
-      );
+      if (dataPoint.fuelId === greenFuel.id) {
+        valuesMap.set(key, {
+          fossil: record.fossil,
+          green: record.green + dataPoint.value,
+          sum: record.sum + dataPoint.value,
+          unknown: record.unknown,
+        });
+        continue;
+      }
 
-      const greenSum = greenDataPoints.length
-        ? greenDataPoints.reduce((runningTotal, dataPoint) => {
-            return runningTotal + dataPoint.value;
-          }, 0)
-        : 0;
-      const fossilSum = fossilDataPoints.length
-        ? fossilDataPoints.reduce((runningTotal, dataPoint) => {
-            return runningTotal + dataPoint.value;
-          }, 0)
-        : 0;
-      const unknownSum = unknownDataPoints.length
-        ? unknownDataPoints.reduce((runningTotal, dataPoint) => {
-            return runningTotal + dataPoint.value;
-          }, 0)
-        : 0;
+      if (dataPoint.fuelId === fossilFuel.id) {
+        valuesMap.set(key, {
+          fossil: record.fossil + dataPoint.value,
+          green: record.green,
+          sum: record.sum + dataPoint.value,
+          unknown: record.unknown,
+        });
+        continue;
+      }
 
-      const sum = greenSum + fossilSum + unknownSum;
+      if (dataPoint.fuelId === unknownFuel.id) {
+        valuesMap.set(key, {
+          fossil: record.fossil,
+          green: record.green,
+          sum: record.sum + dataPoint.value,
+          unknown: record.unknown + dataPoint.value,
+        });
+        continue;
+      }
+    }
 
-      dataPointMap.set(key, [
+    const dataPoints: DataPoint[] = [];
+
+    valuesMap.forEach((value, key) => {
+      const [timestamp, powerId] = key.split('_');
+
+      dataPoints.push(
         {
           fuelId: greenFuel.id,
-          powerId: dataPoint.powerId,
+          powerId: parseInt(powerId, 10),
           regionId: 0,
-          timestamp: dataPoint.timestamp,
-          value: (greenSum / sum) * 100,
+          timestamp: timestamp,
+          value: (value.green / value.sum) * 100,
         },
         {
           fuelId: fossilFuel.id,
-          powerId: dataPoint.powerId,
+          powerId: parseInt(powerId, 10),
           regionId: 0,
-          timestamp: dataPoint.timestamp,
-          value: (fossilSum / sum) * 100,
+          timestamp: timestamp,
+          value: (value.fossil / value.sum) * 100,
         },
         {
           fuelId: unknownFuel.id,
-          powerId: dataPoint.powerId,
+          powerId: parseInt(powerId, 10),
           regionId: 0,
-          timestamp: dataPoint.timestamp,
-          value: (unknownSum / sum) * 100,
-        },
-      ]);
-    }
-
-    const dataPointsArray = Array.from(dataPointMap.values()).flat();
+          timestamp: timestamp,
+          value: (value.unknown / value.sum) * 100,
+        }
+      );
+    });
 
     return {
-      data: dataPointsArray,
+      data: dataPoints,
       endTimestamp: value.endTimestamp,
       metadata: {
         fuels: value.metadata.fuels,
         power: value.metadata.power,
         regions: [],
       },
-      recordCount: dataPointsArray.length,
+      recordCount: dataPoints.length,
       startTimestamp: value.startTimestamp,
     };
   }
