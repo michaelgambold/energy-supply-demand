@@ -55,28 +55,61 @@
     <h2>{{ selectedRegion?.name }}</h2>
     <!-- fuel filters -->
     <div class="mb-4">
-      <app-line-chart
-        *ngIf="generationData$ | async as data; else spinner"
-        [title]="'Generation'"
-        [series]="data.metadata.fuels | fuelsToLineSeries"
-        [data]="data.data | dataToLineDataPoints: 'fuel'"
-      ></app-line-chart>
+      <ng-container *ngIf="selectedRegion?.ref === 'all'">
+        <app-line-chart
+          *ngIf="generationData$ | async as data; else spinner"
+          [title]="'Generation'"
+          [series]="data.metadata.fuels | fuelsToLineSeries"
+          [data]="(data | combineRegions).data | dataToLineDataPoints: 'fuel'"
+        ></app-line-chart>
+      </ng-container>
+      <ng-container *ngIf="selectedRegion?.ref !== 'all'">
+        <app-line-chart
+          *ngIf="generationData$ | async as data; else spinner"
+          [title]="'Generation'"
+          [series]="data.metadata.fuels | fuelsToLineSeries"
+          [data]="data.data | dataToLineDataPoints: 'fuel'"
+        ></app-line-chart>
+      </ng-container>
     </div>
     <div class="mb-4">
-      <app-line-chart
-        *ngIf="fuelTypeGenerationData$ | async as data; else spinner"
-        [title]="'Generation (Green vs Fossil)'"
-        [series]="data.metadata.fuels | fuelsToLineSeries"
-        [data]="data.data | dataToLineDataPoints: 'fuel'"
-      ></app-line-chart>
+      <ng-container *ngIf="selectedRegion?.ref === 'all'">
+        <app-line-chart
+          *ngIf="fuelTypeGenerationData$ | async as data; else spinner"
+          [title]="'Generation (Green vs Fossil)'"
+          [series]="data.metadata.fuels | fuelsToLineSeries"
+          [data]="
+            (data | combineRegionsGreenFossil).data
+              | dataToLineDataPoints: 'fuel'
+          "
+        ></app-line-chart>
+      </ng-container>
+      <ng-container *ngIf="selectedRegion?.ref !== 'all'">
+        <app-line-chart
+          *ngIf="fuelTypeGenerationData$ | async as data; else spinner"
+          [title]="'Generation (Green vs Fossil)'"
+          [series]="data.metadata.fuels | fuelsToLineSeries"
+          [data]="data.data | dataToLineDataPoints: 'fuel'"
+        ></app-line-chart>
+      </ng-container>
     </div>
     <div class="mb-4">
-      <app-line-chart
-        *ngIf="demandData$ | async as data; else spinner"
-        [title]="'Demand'"
-        [series]="data.metadata.fuels | fuelsToLineSeries"
-        [data]="data.data | dataToLineDataPoints: 'fuel'"
-      ></app-line-chart>
+      <ng-container *ngIf="selectedRegion?.ref === 'all'">
+        <app-line-chart
+          *ngIf="demandData$ | async as data; else spinner"
+          [title]="'Demand'"
+          [series]="data.metadata.fuels | fuelsToLineSeries"
+          [data]="(data | combineRegions).data | dataToLineDataPoints: 'fuel'"
+        ></app-line-chart>
+      </ng-container>
+      <ng-container *ngIf="selectedRegion?.ref !== 'all'">
+        <app-line-chart
+          *ngIf="demandData$ | async as data; else spinner"
+          [title]="'Demand'"
+          [series]="data.metadata.fuels | fuelsToLineSeries"
+          [data]="data.data | dataToLineDataPoints: 'fuel'"
+        ></app-line-chart>
+      </ng-container>
     </div>
   </div>
 </ng-template>
