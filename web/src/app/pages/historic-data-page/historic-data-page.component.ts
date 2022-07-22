@@ -85,7 +85,16 @@ export class HistoricDataPageComponent implements OnInit, OnDestroy {
       this.route.queryParamMap,
     ]).subscribe(([power, regions, paramMap]) => {
       this.power = power;
-      this.regions = regions;
+      this.regions = [
+        {
+          abbreviation: 'all',
+          id: 0,
+          name: 'All',
+          ref: 'all',
+          timezone: '',
+        },
+        ...regions,
+      ];
 
       // update selections from query params if we have them
       this.selectedRegionIndex = Number(paramMap.get('tab') || 0);
