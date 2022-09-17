@@ -1,5 +1,5 @@
 export interface Stats {
-  databaseSizeMb: number;
+  databaseSize: string;
   maxTimestamp: string;
   minTimestamp: string;
   recordCount: number;
