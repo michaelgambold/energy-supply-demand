@@ -1,0 +1,9 @@
+<ng-container *ngIf="stats$ | async as stats">
+  <pre>{{ stats | json }}</pre>
+</ng-container>
+
+<ng-template #spinner>
+  <div class="flex justify-center py-16">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>

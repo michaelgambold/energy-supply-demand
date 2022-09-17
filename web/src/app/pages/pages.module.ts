@@ -10,9 +10,10 @@ import { LayoutModule } from '@angular/cdk/layout';
 import { LiveDataPageComponent } from './live-data-page/live-data-page.component';
 import { HistoricDataPageComponent } from './historic-data-page/historic-data-page.component';
 import { SharedModule } from '../shared/shared.module';
+import { StatsComponent } from './stats/stats.component';
 
 @NgModule({
-  declarations: [LiveDataPageComponent, HistoricDataPageComponent],
+  declarations: [LiveDataPageComponent, HistoricDataPageComponent, StatsComponent],
   imports: [
     CommonModule,
     SharedModule,

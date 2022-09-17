@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HistoricDataPageComponent } from './pages/historic-data-page/historic-data-page.component';
 import { LiveDataPageComponent } from './pages/live-data-page/live-data-page.component';
+import { StatsComponent } from './pages/stats/stats.component';
 
 const routes: Routes = [
   {
@@ -11,6 +12,10 @@ const routes: Routes = [
   {
     path: 'historic',
     component: HistoricDataPageComponent,
+  },
+  {
+    path: 'stats',
+    component: StatsComponent,
   },
 ];
 
