@@ -12,13 +12,12 @@ export class StatsService {
     private readonly em: EntityManager,
   ) {}
 
-  async getDatabaseSizeMb(): Promise<number> {
+  async getDatabaseSize(): Promise<string> {
     const query = await this.em
       .getKnex()
       .raw("select pg_size_pretty(pg_database_size('postgres')) as size");
 
-    const res = query.rows[0].size as string;
-    return Number(res.slice(0, -3));
+    return query.rows[0].size;
   }
 
   async getMinTimestamp(): Promise<Date> {

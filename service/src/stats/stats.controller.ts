@@ -13,10 +13,10 @@ export class StatsController {
     const minTimestamp = await this.statsService.getMinTimestamp();
     const maxTimestamp = await this.statsService.getMaxTimestamp();
     const recordCount = await this.statsService.getRecordCount();
-    const databaseSizeMb = await this.statsService.getDatabaseSizeMb();
+    const databaseSize = await this.statsService.getDatabaseSize();
 
     return {
-      databaseSizeMb,
+      databaseSize,
       maxTimestamp: maxTimestamp.toISOString(),
       minTimestamp: minTimestamp.toISOString(),
       recordCount,
