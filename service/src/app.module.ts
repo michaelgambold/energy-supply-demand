@@ -17,6 +17,7 @@ import { PowerModule } from './power/power.module';
 import { PowerSeeder } from './seeders/PowerSeeder';
 import { DateSeeder } from './seeders/DateSeeder';
 import { TimeSeeder } from './seeders/TimeSeeder';
+import { StatsModule } from './stats/stats.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { TimeSeeder } from './seeders/TimeSeeder';
     FuelModule,
     RegionModule,
     PowerModule,
+    StatsModule,
   ],
   controllers: [],
   providers: [],
